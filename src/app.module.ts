@@ -6,10 +6,11 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { OpenAIModule } from './openai/openai.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     MongooseModule.forRoot(
       `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE_NAME}?authSource=admin`,
     ),
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN_MS },
     }),
+    OpenAIModule,
     UserModule,
     AuthModule,
   ],
