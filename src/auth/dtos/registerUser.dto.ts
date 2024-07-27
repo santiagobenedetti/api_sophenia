@@ -3,6 +3,7 @@ import { Expose, Transform } from 'class-transformer';
 import { IsEnum, IsString } from 'class-validator';
 import { CreateUserDto } from 'src/user/dtos';
 import { WineRoleEnum } from 'src/user/enums';
+import { RolesEnum } from '../enums';
 
 export class RegisterDto implements CreateUserDto {
   @ApiProperty()
@@ -19,6 +20,11 @@ export class RegisterDto implements CreateUserDto {
   @Expose()
   @IsEnum(WineRoleEnum)
   wineRole: WineRoleEnum;
+
+  @ApiProperty()
+  @Expose()
+  @IsEnum(RolesEnum)
+  role: RolesEnum;
 
   @Expose()
   @Transform(() => true)

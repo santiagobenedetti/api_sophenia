@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -12,8 +11,8 @@ import { UserRoutesEnum } from './enums';
 import { UpdateUserDto } from './dtos';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { UserId } from 'src/shared/decorators/userId.decorator';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { UserId } from 'src/shared/decorators/userId.decorator';
 
 @ApiTags(UserRoutesEnum.user)
 @Controller(UserRoutesEnum.user)
@@ -28,7 +27,8 @@ export class UserController {
   }
 
   @UseGuards(JwtGuard)
-  @Patch()
+  @ApiBearerAuth('access-token')
+  @Patch(UserRoutesEnum.update)
   async updateUser(
     @Body(
       new ValidationPipe({

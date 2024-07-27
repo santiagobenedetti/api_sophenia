@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -20,6 +20,7 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto) {
     const newUser = new this.userModel(createUserDto);
+    newUser.roles = [createUserDto.role];
     await newUser.save();
     Logger.log(
       `Created user with data: ${JSON.stringify(createUserDto)}`,
@@ -35,5 +36,12 @@ export class UserService {
     );
   }
 
-  async updateUser(userId: string, updateUserDto: UpdateUserDto) {}
+  async updateUser(userId: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user.updateOne(updateUserDto);
+  }
 }

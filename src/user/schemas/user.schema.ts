@@ -2,6 +2,7 @@ import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { WineRoleEnum } from '../enums';
 import { Exclude } from 'class-transformer';
+import { RolesEnum } from 'src/auth/enums';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -27,6 +28,13 @@ export class User {
 
   @Prop({ required: true, default: true })
   available: boolean;
+
+  @Prop({
+    type: [String],
+    required: true,
+    enum: RolesEnum,
+  })
+  roles: RolesEnum[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

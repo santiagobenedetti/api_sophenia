@@ -3,8 +3,9 @@ import { Expose, Transform } from 'class-transformer';
 import { IsEnum, IsString } from 'class-validator';
 import { WineRoleEnum } from '../enums';
 import { User } from '../schemas/user.schema';
+import { RolesEnum } from 'src/auth/enums';
 
-export class CreateUserDto implements Omit<User, 'password'> {
+export class CreateUserDto implements Omit<User, 'password' | 'roles'> {
   @ApiProperty()
   @Expose()
   @IsString()
@@ -23,4 +24,9 @@ export class CreateUserDto implements Omit<User, 'password'> {
   @Expose()
   @Transform(() => true)
   available: boolean;
+
+  @ApiProperty()
+  @Expose()
+  @IsEnum(RolesEnum)
+  role: RolesEnum;
 }

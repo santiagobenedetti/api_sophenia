@@ -27,10 +27,16 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    const hasRole = user.roles.some((r) => r == loginDto.role);
+    if (!hasRole) {
+      throw new UnauthorizedException();
+    }
+
     const payload = {
       sub: user.id,
       username: user.username,
       fullname: user.fullname,
+      role: loginDto.role,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),

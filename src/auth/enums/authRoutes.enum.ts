@@ -3,5 +3,5 @@ export enum AuthRoutesEnum {
 
   login = '/login',
   register = '/register',
-  generatePassword = '/generate-password',
+  createPassword = '/create-password',
 }

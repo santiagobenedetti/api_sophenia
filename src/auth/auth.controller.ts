@@ -12,13 +12,17 @@ import { AuthRoutesEnum } from './enums/authRoutes.enum';
 import { AuthService } from './auth.service';
 import { CreatePasswordDto, LoginDto, RegisterDto } from './dtos';
 import { JwtGuard } from './guards/jwt.guard';
+import { RoleGuard } from './guards/role.guard';
+import { Roles } from './decorators/role.decorator';
+import { RolesEnum } from './enums';
 
 @ApiTags(AuthRoutesEnum.auth)
 @Controller(AuthRoutesEnum.auth)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Post(AuthRoutesEnum.register)
   registerUser(
@@ -36,7 +40,8 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @Post(AuthRoutesEnum.generatePassword)
+  // A little unsecure, anyone that finds the username can set the password
+  @Post(AuthRoutesEnum.createPassword)
   generatePassword(
     @Body(
       new ValidationPipe({
