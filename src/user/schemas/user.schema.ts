@@ -1,5 +1,5 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { WineRoleEnum } from '../enums';
 import { Exclude } from 'class-transformer';
 import { RolesEnum } from 'src/auth/enums';
@@ -8,6 +8,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
+  @Prop()
+  _id: Types.ObjectId;
+
   @Prop({ required: true, unique: true })
   username: string;
 
