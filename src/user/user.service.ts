@@ -3,6 +3,9 @@ import { CreateUserDto, UpdateUserDto } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
+import { GetUsersQueryParams } from 'src/shared/types/users';
+import { mapGetPaginationDto } from 'src/shared/mappers/pagination.mapper';
+import { mapGetUsersData } from './mappers/getUsers.mapper';
 
 @Injectable()
 export class UserService {
@@ -43,5 +46,14 @@ export class UserService {
     }
 
     return user.updateOne(updateUserDto);
+  }
+
+  async getUsers({ limit, offset }: GetUsersQueryParams) {
+    const users = await this.userModel.find().skip(offset).limit(limit).exec();
+    const total = await this.userModel.countDocuments();
+    return {
+      data: mapGetUsersData(users),
+      pagination: mapGetPaginationDto(limit, offset, total),
+    };
   }
 }

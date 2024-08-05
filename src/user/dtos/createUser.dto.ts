@@ -5,7 +5,7 @@ import { WineRoleEnum } from '../enums';
 import { User } from '../schemas/user.schema';
 import { RolesEnum } from 'src/auth/enums';
 
-export class CreateUserDto implements Omit<User, 'password' | 'roles'> {
+export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
   @ApiProperty()
   @Expose()
   @IsString()
