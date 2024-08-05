@@ -1,4 +1,4 @@
-export const mapGetPaginationDto = (limit, offset, total) => {
+export const mapPagination = (limit, offset, total) => {
   return {
     limit,
     offset,

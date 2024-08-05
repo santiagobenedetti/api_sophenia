@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { GetUsersQueryParams } from 'src/shared/types/users';
-import { mapGetPaginationDto } from 'src/shared/mappers/pagination.mapper';
+import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 import { mapGetUsersData } from './mappers/getUsers.mapper';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class UserService {
     const total = await this.userModel.countDocuments();
     return {
       data: mapGetUsersData(users),
-      pagination: mapGetPaginationDto(limit, offset, total),
+      pagination: mapPagination(limit, offset, total),
     };
   }
 }
