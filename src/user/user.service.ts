@@ -17,6 +17,10 @@ export class UserService {
     return this.userModel.findById(userId).exec();
   }
 
+  async getUserByEmail(email: string) {
+    return this.userModel.findOne({ email: email }).exec();
+  }
+
   async getUserByUsername(username: string) {
     return this.userModel.findOne({ username: username }).exec();
   }

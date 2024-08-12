@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { WineRoleEnum } from '../enums';
 import { User } from '../schemas/user.schema';
 import { RolesEnum } from 'src/auth/enums';
@@ -10,6 +10,11 @@ export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
   @Expose()
   @IsString()
   fullname: string;
+
+  @ApiProperty()
+  @Expose()
+  @IsEmail()
+  email: string;
 
   @ApiProperty()
   @Expose()

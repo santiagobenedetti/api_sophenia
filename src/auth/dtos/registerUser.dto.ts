@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { CreateUserDto } from 'src/user/dtos';
 import { WineRoleEnum } from 'src/user/enums';
 import { RolesEnum } from '../enums';
@@ -10,6 +10,11 @@ export class RegisterDto implements CreateUserDto {
   @Expose()
   @IsString()
   fullname: string;
+
+  @ApiProperty()
+  @Expose()
+  @IsEmail()
+  email: string;
 
   @ApiProperty()
   @Expose()
