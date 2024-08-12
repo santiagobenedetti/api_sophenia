@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { OpenAIModule } from './openai/openai.module';
+import { NotificatorModule } from './notificator/notificator.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OpenAIModule } from './openai/openai.module';
     OpenAIModule,
     UserModule,
     AuthModule,
+    NotificatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

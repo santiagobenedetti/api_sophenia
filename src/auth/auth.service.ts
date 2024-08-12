@@ -13,12 +13,15 @@ import {
   RegisterDto,
 } from './dtos';
 import * as bcrypt from 'bcrypt';
+import { NotificatorService } from 'src/notificator/notificator.service';
+import { TemplatesEnum } from 'src/notificator/enums';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
+    private notificatorService: NotificatorService,
   ) {}
 
   async login(loginDto: LoginDto) {
