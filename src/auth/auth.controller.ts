@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
   CreatePasswordDto,
+  ForgotPasswordDto,
   LoginDto,
   RegisterDto,
 } from './dtos';
@@ -98,5 +99,22 @@ export class AuthController {
     @UserId() userId: string,
   ) {
     return this.authService.changePassword(changePasswordDto, userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post(AuthRoutesEnum.forgotPassword)
+  async forgotPassword(
+    @Body(
+      new ValidationPipe({
+        expectedType: ForgotPasswordDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+          exposeUnsetFields: false,
+        },
+      }),
+    )
+    forgotPasswordDto: ForgotPasswordDto,
+  ) {
+    return this.authService.forgotPassword(forgotPasswordDto);
   }
 }

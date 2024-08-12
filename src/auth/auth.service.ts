@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,12 +10,14 @@ import { UserService } from 'src/user/user.service';
 import {
   ChangePasswordDto,
   CreatePasswordDto,
+  ForgotPasswordDto,
   LoginDto,
   RegisterDto,
 } from './dtos';
 import * as bcrypt from 'bcrypt';
 import { NotificatorService } from 'src/notificator/notificator.service';
 import { TemplatesEnum } from 'src/notificator/enums';
+import { generate } from 'generate-password';
 
 @Injectable()
 export class AuthService {
@@ -90,5 +93,36 @@ export class AuthService {
     );
 
     return this.userService.changePassword(user.username, hashedPassword);
+  }
+
+  async forgotPassword(forgotPassword: ForgotPasswordDto) {
+    const user = await this.userService.getUserByEmail(forgotPassword.email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const newPassword = generate({
+      length: 8,
+      numbers: true,
+    });
+    const saltOrRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltOrRounds);
+
+    try {
+      await this.userService.changePassword(user.username, hashedPassword);
+      await this.notificatorService.send(
+        user.email,
+        'SophenIA - Nueva contraseña',
+        TemplatesEnum.forgotPassword,
+        {
+          newPassword: newPassword,
+          fullname: user.fullname,
+        },
+      );
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    } finally {
+      return true;
+    }
   }
 }
