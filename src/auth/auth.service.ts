@@ -6,7 +6,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { CreatePasswordDto, LoginDto, RegisterDto } from './dtos';
+import {
+  ChangePasswordDto,
+  CreatePasswordDto,
+  LoginDto,
+  RegisterDto,
+} from './dtos';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -67,5 +72,20 @@ export class AuthService {
     const hash = await bcrypt.hash(createPasswordDto.password, saltOrRounds);
 
     return this.userService.changePassword(createPasswordDto.username, hash);
+  }
+
+  async changePassword(changePasswordDto: ChangePasswordDto, userId: string) {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const saltOrRounds = 10;
+    const hashedPassword = await bcrypt.hash(
+      changePasswordDto.newPassword,
+      saltOrRounds,
+    );
+
+    return this.userService.changePassword(user.username, hashedPassword);
   }
 }

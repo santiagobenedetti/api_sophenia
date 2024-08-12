@@ -10,11 +10,17 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthRoutesEnum } from './enums/authRoutes.enum';
 import { AuthService } from './auth.service';
-import { CreatePasswordDto, LoginDto, RegisterDto } from './dtos';
+import {
+  ChangePasswordDto,
+  CreatePasswordDto,
+  LoginDto,
+  RegisterDto,
+} from './dtos';
 import { JwtGuard } from './guards/jwt.guard';
 import { RoleGuard } from './guards/role.guard';
 import { Roles } from './decorators/role.decorator';
 import { RolesEnum } from './enums';
+import { UserId } from 'src/shared/decorators/userId.decorator';
 
 @ApiTags(AuthRoutesEnum.auth)
 @Controller(AuthRoutesEnum.auth)
@@ -72,5 +78,25 @@ export class AuthController {
     loginDto: LoginDto,
   ) {
     return this.authService.login(loginDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Post(AuthRoutesEnum.changePassword)
+  async changePassword(
+    @Body(
+      new ValidationPipe({
+        expectedType: ChangePasswordDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+          exposeUnsetFields: false,
+        },
+      }),
+    )
+    changePasswordDto: ChangePasswordDto,
+    @UserId() userId: string,
+  ) {
+    return this.authService.changePassword(changePasswordDto, userId);
   }
 }

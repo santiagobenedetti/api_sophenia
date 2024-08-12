@@ -9,9 +9,10 @@ export class OpenAIService {
   private openai: OpenAI;
 
   constructor(private configService: ConfigService) {
-    this.openai = new OpenAI({
-      apiKey: configService.get('OPENAI_API_KEY'),
-    });
+    // TODO
+    // this.openai = new OpenAI({
+    //   apiKey: configService.get('OPENAI_API_KEY'),
+    // });
   }
 
   async getRecommendedTasks() {
