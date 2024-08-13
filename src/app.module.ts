@@ -12,9 +12,7 @@ import { NotificatorModule } from './notificator/notificator.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
-    MongooseModule.forRoot(
-      `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE_NAME}?authSource=admin`,
-    ),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
