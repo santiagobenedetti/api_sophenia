@@ -1,6 +1,6 @@
 export enum UserRoutesEnum {
   user = '/user',
 
-  update = '/:id',
+  userById = '/:id',
   profile = '/profile',
 }

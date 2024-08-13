@@ -8,6 +8,7 @@ export const mapGetUsersData = (users: User[]): GetUserDto[] => {
       fullname: user.fullname,
       role: user.wineRole,
       available: user.available,
+      status: user.status,
     };
   });
 };

@@ -4,6 +4,7 @@ import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { WineRoleEnum } from '../enums';
 import { User } from '../schemas/user.schema';
 import { RolesEnum } from 'src/auth/enums';
+import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 
 export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
   @ApiProperty()
@@ -34,4 +35,9 @@ export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
   @Expose()
   @IsEnum(RolesEnum)
   role: RolesEnum;
+
+  @ApiProperty()
+  @Expose()
+  @IsEnum(UserStatusEnum)
+  status: UserStatusEnum;
 }

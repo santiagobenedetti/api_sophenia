@@ -3,6 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { WineRoleEnum } from '../enums';
 import { Exclude } from 'class-transformer';
 import { RolesEnum } from 'src/auth/enums';
+import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -40,6 +41,9 @@ export class User {
     enum: RolesEnum,
   })
   roles: RolesEnum[];
+
+  @Prop({ required: true, default: UserStatusEnum.ACTIVE })
+  status: UserStatusEnum;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

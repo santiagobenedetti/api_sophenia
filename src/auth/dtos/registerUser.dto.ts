@@ -4,6 +4,7 @@ import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { CreateUserDto } from 'src/user/dtos';
 import { WineRoleEnum } from 'src/user/enums';
 import { RolesEnum } from '../enums';
+import { UserStatusEnum } from '../enums/userStatus.enum';
 
 export class RegisterDto implements CreateUserDto {
   @ApiProperty()
@@ -34,4 +35,9 @@ export class RegisterDto implements CreateUserDto {
   @Expose()
   @Transform(() => true)
   available: boolean;
+
+  @ApiProperty()
+  @Expose()
+  @IsEnum(UserStatusEnum)
+  status: UserStatusEnum;
 }

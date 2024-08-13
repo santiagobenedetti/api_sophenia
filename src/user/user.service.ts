@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -6,6 +11,8 @@ import { Model } from 'mongoose';
 import { GetUsersQueryParams } from 'src/shared/types/users';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 import { mapGetUsersData } from './mappers/getUsers.mapper';
+import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
+import { isUserDeleted } from 'src/shared/models/users';
 
 @Injectable()
 export class UserService {
@@ -59,5 +66,18 @@ export class UserService {
       data: mapGetUsersData(users),
       pagination: mapPagination(limit, offset, total),
     };
+  }
+
+  async deleteUser(userId: string) {
+    const user = await this.userModel.findOne({ _id: userId });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (isUserDeleted(user)) {
+      throw new BadRequestException('User already deleted');
+    }
+
+    return user.updateOne({ status: UserStatusEnum.DELETED });
   }
 }

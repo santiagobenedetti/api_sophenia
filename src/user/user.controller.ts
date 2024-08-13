@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -35,7 +36,7 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
-  @Patch(UserRoutesEnum.update)
+  @Patch(UserRoutesEnum.userById)
   async updateUser(
     @Body(
       new ValidationPipe({
@@ -59,5 +60,13 @@ export class UserController {
   @Get()
   async getUsers(@Query() getUsersQueryParams: GetUsersQueryParams) {
     return this.userService.getUsers(getUsersQueryParams);
+  }
+
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Delete(UserRoutesEnum.userById)
+  async deleteUser(@Param('id') userId: string) {
+    return this.userService.deleteUser(userId);
   }
 }

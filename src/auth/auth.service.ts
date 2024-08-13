@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -18,6 +19,7 @@ import * as bcrypt from 'bcrypt';
 import { NotificatorService } from 'src/notificator/notificator.service';
 import { TemplatesEnum } from 'src/notificator/enums';
 import { generate } from 'generate-password';
+import { isUserActive } from 'src/shared/models/users';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +32,10 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.userService.getUserByUsername(loginDto.username);
     if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    if (!isUserActive(user)) {
       throw new UnauthorizedException();
     }
 
@@ -70,6 +76,11 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    if (!isUserActive(user)) {
+      throw new UnauthorizedException('User is not active');
+    }
+
     if (user.password) {
       throw new ConflictException('Password already generated');
     }
@@ -86,6 +97,10 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
+    if (!isUserActive(user)) {
+      throw new BadRequestException('User is not active');
+    }
+
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(
       changePasswordDto.newPassword,
@@ -99,6 +114,10 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(forgotPassword.email);
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (!isUserActive(user)) {
+      throw new BadRequestException('User is not active');
     }
 
     const newPassword = generate({
