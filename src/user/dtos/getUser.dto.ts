@@ -14,8 +14,5 @@ export class GetUserDto {
   role: WineRoleEnum;
 
   @ApiProperty()
-  available: boolean;
-
-  @ApiProperty()
   status: UserStatusEnum;
 }

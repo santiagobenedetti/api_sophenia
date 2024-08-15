@@ -32,9 +32,6 @@ export class User {
   })
   wineRole: WineRoleEnum;
 
-  @Prop({ required: true, default: true })
-  available: boolean;
-
   @Prop({
     type: [String],
     required: true,

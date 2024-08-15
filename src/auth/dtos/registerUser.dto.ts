@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { CreateUserDto } from 'src/user/dtos';
 import { WineRoleEnum } from 'src/user/enums';
@@ -31,10 +31,6 @@ export class RegisterDto implements CreateUserDto {
   @Expose()
   @IsEnum(RolesEnum)
   role: RolesEnum;
-
-  @Expose()
-  @Transform(() => true)
-  available: boolean;
 
   @ApiProperty()
   @Expose()

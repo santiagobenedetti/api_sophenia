@@ -10,7 +10,6 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { GetUsersQueryParams } from 'src/shared/types/users';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
-import { mapGetUsersData } from './mappers/getUsers.mapper';
 import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 import { isUserDeleted } from 'src/shared/models/users';
 
@@ -21,7 +20,12 @@ export class UserService {
   ) {}
 
   async getUserById(userId: string) {
-    return this.userModel.findById(userId).exec();
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async getUserByEmail(email: string) {
@@ -63,7 +67,7 @@ export class UserService {
     const users = await this.userModel.find().skip(offset).limit(limit).exec();
     const total = await this.userModel.countDocuments();
     return {
-      data: mapGetUsersData(users),
+      data: users,
       pagination: mapPagination(limit, offset, total),
     };
   }
