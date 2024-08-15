@@ -17,11 +17,6 @@ export class RegisterDto implements CreateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty()
-  @Expose()
-  @IsString()
-  username: string;
-
   @ApiProperty({ enum: WineRoleEnum, examples: Object.keys(WineRoleEnum) })
   @Expose()
   @IsEnum(WineRoleEnum)

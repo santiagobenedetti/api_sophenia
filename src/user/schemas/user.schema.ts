@@ -12,9 +12,6 @@ export class User {
   _id: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
-  username: string;
-
-  @Prop({ required: true, unique: true })
   email: string;
 
   @Exclude()

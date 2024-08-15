@@ -47,7 +47,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  // A little unsecure, anyone that finds the username can set the password
+  // A little unsecure, anyone that finds the email can set the password
   @Post(AuthRoutesEnum.createPassword)
   generatePassword(
     @Body(

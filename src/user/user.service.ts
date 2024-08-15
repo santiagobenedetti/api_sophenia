@@ -32,10 +32,6 @@ export class UserService {
     return this.userModel.findOne({ email: email }).exec();
   }
 
-  async getUserByUsername(username: string) {
-    return this.userModel.findOne({ username: username }).exec();
-  }
-
   async createUser(createUserDto: CreateUserDto) {
     const newUser = new this.userModel(createUserDto);
     newUser.roles = [createUserDto.role];
@@ -47,11 +43,8 @@ export class UserService {
     return newUser;
   }
 
-  async changePassword(username: string, password: string) {
-    return this.userModel.updateOne(
-      { username: username },
-      { password: password },
-    );
+  async changePassword(email: string, password: string) {
+    return this.userModel.updateOne({ email: email }, { password: password });
   }
 
   async updateUser(userId: string, updateUserDto: UpdateUserDto) {

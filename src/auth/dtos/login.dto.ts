@@ -7,7 +7,7 @@ export class LoginDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  username: string;
+  email: string;
 
   @ApiProperty()
   @Expose()

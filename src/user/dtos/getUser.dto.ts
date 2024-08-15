@@ -11,6 +11,9 @@ export class GetUserDto {
   fullname: string;
 
   @ApiProperty()
+  email: string;
+
+  @ApiProperty()
   role: WineRoleEnum;
 
   @ApiProperty()

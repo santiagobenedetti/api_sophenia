@@ -19,11 +19,6 @@ export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
 
   @ApiProperty()
   @Expose()
-  @IsString()
-  username: string;
-
-  @ApiProperty()
-  @Expose()
   @IsEnum(WineRoleEnum)
   wineRole: WineRoleEnum;
 
