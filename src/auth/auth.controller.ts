@@ -47,22 +47,22 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  // A little unsecure, anyone that finds the email can set the password
-  @Post(AuthRoutesEnum.createPassword)
-  generatePassword(
-    @Body(
-      new ValidationPipe({
-        expectedType: CreatePasswordDto,
-        transformOptions: {
-          excludeExtraneousValues: true,
-          exposeUnsetFields: false,
-        },
-      }),
-    )
-    createPasswordDto: CreatePasswordDto,
-  ) {
-    return this.authService.createPassword(createPasswordDto);
-  }
+  // // A little unsecure, anyone that finds the email can set the password
+  // @Post(AuthRoutesEnum.createPassword)
+  // generatePassword(
+  //   @Body(
+  //     new ValidationPipe({
+  //       expectedType: CreatePasswordDto,
+  //       transformOptions: {
+  //         excludeExtraneousValues: true,
+  //         exposeUnsetFields: false,
+  //       },
+  //     }),
+  //   )
+  //   createPasswordDto: CreatePasswordDto,
+  // ) {
+  //   return this.authService.createPassword(createPasswordDto);
+  // }
 
   @HttpCode(HttpStatus.OK)
   @Post(AuthRoutesEnum.login)

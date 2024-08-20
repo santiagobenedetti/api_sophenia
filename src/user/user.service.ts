@@ -32,7 +32,7 @@ export class UserService {
     return this.userModel.findOne({ email: email }).exec();
   }
 
-  async createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto & { password?: string }) {
     const newUser = new this.userModel(createUserDto);
     newUser.roles = [createUserDto.role];
     await newUser.save();

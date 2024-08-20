@@ -66,7 +66,26 @@ export class AuthService {
       throw new ConflictException('Already existing email');
     }
 
-    return this.userService.createUser(registerDto);
+    try {
+      const password = this.generateNewRandomPassword();
+      const hashedPassword = await this.hashPassword(password);
+      const newUser = await this.userService.createUser({
+        ...registerDto,
+        password: hashedPassword,
+      });
+      await this.notificatorService.send(
+        newUser.email,
+        'SophenIA - Bienvenido',
+        TemplatesEnum.createUserWithTemporalPassword,
+        {
+          newPassword: password,
+          email: newUser.email,
+        },
+      );
+      return newUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async createPassword(createPasswordDto: CreatePasswordDto) {
@@ -141,5 +160,23 @@ export class AuthService {
     } finally {
       return true;
     }
+  }
+
+  /**
+   * Returns a random password
+   */
+  private generateNewRandomPassword() {
+    return generate({
+      length: 8,
+      numbers: true,
+    });
+  }
+
+  /**
+   * Returns the hash of the password
+   */
+  private async hashPassword(pass: string): Promise<string> {
+    const saltOrRounds = 10;
+    return bcrypt.hash(pass, saltOrRounds);
   }
 }
