@@ -30,7 +30,7 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const user = await this.userService.getUserByUsername(loginDto.username);
+    const user = await this.userService.getUserByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -51,7 +51,7 @@ export class AuthService {
 
     const payload = {
       sub: user._id,
-      username: user.username,
+      email: user.email,
       fullname: user.fullname,
       role: loginDto.role,
     };
@@ -61,18 +61,35 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const user = await this.userService.getUserByUsername(registerDto.username);
+    const user = await this.userService.getUserByEmail(registerDto.email);
     if (user) {
-      throw new ConflictException('Already existing username');
+      throw new ConflictException('Already existing email');
     }
 
-    return this.userService.createUser(registerDto);
+    try {
+      const password = this.generateNewRandomPassword();
+      const hashedPassword = await this.hashPassword(password);
+      const newUser = await this.userService.createUser({
+        ...registerDto,
+        password: hashedPassword,
+      });
+      await this.notificatorService.send(
+        newUser.email,
+        'SophenIA - Bienvenido',
+        TemplatesEnum.createUserWithTemporalPassword,
+        {
+          newPassword: password,
+          email: newUser.email,
+        },
+      );
+      return newUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async createPassword(createPasswordDto: CreatePasswordDto) {
-    const user = await this.userService.getUserByUsername(
-      createPasswordDto.username,
-    );
+    const user = await this.userService.getUserByEmail(createPasswordDto.email);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -88,7 +105,7 @@ export class AuthService {
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(createPasswordDto.password, saltOrRounds);
 
-    return this.userService.changePassword(createPasswordDto.username, hash);
+    return this.userService.changePassword(createPasswordDto.email, hash);
   }
 
   async changePassword(changePasswordDto: ChangePasswordDto, userId: string) {
@@ -107,7 +124,7 @@ export class AuthService {
       saltOrRounds,
     );
 
-    return this.userService.changePassword(user.username, hashedPassword);
+    return this.userService.changePassword(user.email, hashedPassword);
   }
 
   async forgotPassword(forgotPassword: ForgotPasswordDto) {
@@ -128,14 +145,14 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(newPassword, saltOrRounds);
 
     try {
-      await this.userService.changePassword(user.username, hashedPassword);
+      await this.userService.changePassword(user.email, hashedPassword);
       await this.notificatorService.send(
         user.email,
         'SophenIA - Nueva contraseña',
         TemplatesEnum.forgotPassword,
         {
           newPassword: newPassword,
-          fullname: user.fullname,
+          email: user.email,
         },
       );
     } catch (e) {
@@ -143,5 +160,23 @@ export class AuthService {
     } finally {
       return true;
     }
+  }
+
+  /**
+   * Returns a random password
+   */
+  private generateNewRandomPassword() {
+    return generate({
+      length: 8,
+      numbers: true,
+    });
+  }
+
+  /**
+   * Returns the hash of the password
+   */
+  private async hashPassword(pass: string): Promise<string> {
+    const saltOrRounds = 10;
+    return bcrypt.hash(pass, saltOrRounds);
   }
 }

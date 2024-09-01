@@ -10,7 +10,6 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { GetUsersQueryParams } from 'src/shared/types/users';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
-import { mapGetUsersData } from './mappers/getUsers.mapper';
 import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 import { isUserDeleted } from 'src/shared/models/users';
 
@@ -21,18 +20,19 @@ export class UserService {
   ) {}
 
   async getUserById(userId: string) {
-    return this.userModel.findById(userId).exec();
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async getUserByEmail(email: string) {
     return this.userModel.findOne({ email: email }).exec();
   }
 
-  async getUserByUsername(username: string) {
-    return this.userModel.findOne({ username: username }).exec();
-  }
-
-  async createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto & { password?: string }) {
     const newUser = new this.userModel(createUserDto);
     newUser.roles = [createUserDto.role];
     await newUser.save();
@@ -43,11 +43,8 @@ export class UserService {
     return newUser;
   }
 
-  async changePassword(username: string, password: string) {
-    return this.userModel.updateOne(
-      { username: username },
-      { password: password },
-    );
+  async changePassword(email: string, password: string) {
+    return this.userModel.updateOne({ email: email }, { password: password });
   }
 
   async updateUser(userId: string, updateUserDto: UpdateUserDto) {
@@ -63,7 +60,7 @@ export class UserService {
     const users = await this.userModel.find().skip(offset).limit(limit).exec();
     const total = await this.userModel.countDocuments();
     return {
-      data: mapGetUsersData(users),
+      data: users,
       pagination: mapPagination(limit, offset, total),
     };
   }

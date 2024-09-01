@@ -6,7 +6,7 @@ export class CreatePasswordDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  username: string;
+  email: string;
 
   @ApiProperty()
   @Expose()

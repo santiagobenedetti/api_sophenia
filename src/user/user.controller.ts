@@ -21,6 +21,8 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { RolesEnum } from 'src/auth/enums';
 import { PaginationPipe } from 'src/shared/pipes/pagination.pipe';
 import { GetUsersQueryParams } from 'src/shared/types/users';
+import { mapGetUserData } from './mappers/getUser.mapper';
+import { mapGetUsersData } from './mappers/getUsers.mapper';
 
 @ApiTags(UserRoutesEnum.user)
 @Controller(UserRoutesEnum.user)
@@ -59,7 +61,11 @@ export class UserController {
   @UsePipes(new PaginationPipe())
   @Get()
   async getUsers(@Query() getUsersQueryParams: GetUsersQueryParams) {
-    return this.userService.getUsers(getUsersQueryParams);
+    const response = await this.userService.getUsers(getUsersQueryParams);
+    return {
+      ...response,
+      data: mapGetUsersData(response.data),
+    };
   }
 
   @UseGuards(JwtGuard, RoleGuard)
@@ -68,5 +74,14 @@ export class UserController {
   @Delete(UserRoutesEnum.userById)
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
+  }
+
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Get(UserRoutesEnum.userById)
+  async getUserById(@Param('id') userId: string) {
+    const user = await this.userService.getUserById(userId);
+    return mapGetUserData(user);
   }
 }

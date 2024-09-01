@@ -11,10 +11,10 @@ export class GetUserDto {
   fullname: string;
 
   @ApiProperty()
-  role: WineRoleEnum;
+  email: string;
 
   @ApiProperty()
-  available: boolean;
+  role: WineRoleEnum;
 
   @ApiProperty()
   status: UserStatusEnum;

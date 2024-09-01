@@ -12,9 +12,6 @@ export class User {
   _id: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
-  username: string;
-
-  @Prop({ required: true, unique: true })
   email: string;
 
   @Exclude()
@@ -31,9 +28,6 @@ export class User {
     enum: WineRoleEnum,
   })
   wineRole: WineRoleEnum;
-
-  @Prop({ required: true, default: true })
-  available: boolean;
 
   @Prop({
     type: [String],
