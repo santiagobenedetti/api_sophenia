@@ -12,10 +12,7 @@ export class WorkOrder {
   tasks: Task[];
 
   @Prop({ required: true })
-  startDate: Date;
-
-  @Prop({ required: true })
-  endDate: Date;
+  date: Date;
 }
 
 export const WorkOrderSchema = SchemaFactory.createForClass(WorkOrder);
