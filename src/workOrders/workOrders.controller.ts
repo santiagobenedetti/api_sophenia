@@ -6,7 +6,7 @@ import { WorkOrdersService } from './workOrders.service';
 
 @ApiTags(WorkOrdersRoutesEnum.workOrders)
 @Controller(WorkOrdersRoutesEnum.workOrders)
-export class WorkOrderController {
+export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
   @UseGuards(JwtGuard)
