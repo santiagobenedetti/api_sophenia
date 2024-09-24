@@ -2,6 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task } from './schemas/task.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { TaskStatusEnum } from './enums/taskStatus.enum';
+import { GetBacklogTasksQueryParams } from 'src/shared/types/tasks';
+import { mapPagination } from 'src/shared/mappers/pagination.mapper';
+import { CreateTasksDto } from './dtos/createTasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -16,5 +20,26 @@ export class TasksService {
     }
 
     return task;
+  }
+
+  async getBacklogTasks({ limit, offset }: GetBacklogTasksQueryParams) {
+    const backlogCondition = {
+      workerAssigned: null,
+      status: TaskStatusEnum.PENDING,
+    };
+    const backlogTasks = await this.taskModel
+      .find(backlogCondition)
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    const total = await this.taskModel.countDocuments(backlogCondition);
+    return {
+      data: backlogTasks,
+      pagination: mapPagination(limit, offset, total),
+    };
+  }
+
+  async createTasks({ tasks }: CreateTasksDto) {
+    return this.taskModel.create(tasks);
   }
 }

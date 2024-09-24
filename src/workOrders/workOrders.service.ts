@@ -1,13 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { WorkOrder } from './schemas/workOrder.schema';
+import { CreateWorkOrderDto } from './dtos/createWorkOrder.dto';
+import { Task } from 'src/tasks/schemas/task.schema';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class WorkOrdersService {
   constructor(
     @InjectModel(WorkOrder.name)
     private readonly workOrderModel: Model<WorkOrder>,
+    @InjectModel(Task.name)
+    private readonly taskModel: Model<Task>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
   ) {}
 
   async getWorkOrderById(workOrderId: string) {
@@ -17,5 +28,32 @@ export class WorkOrdersService {
     }
 
     return workOrder;
+  }
+
+  async createWorkOrder({ workOrderTasks }: CreateWorkOrderDto) {
+    const tasks = [];
+    for (const { taskId, workerAssignedId } of workOrderTasks) {
+      const foundTask = await this.taskModel.findById(taskId).exec();
+      if (!foundTask) {
+        throw new NotFoundException('Task not found');
+      }
+      if (tasks.some((task) => task._id === taskId)) {
+        throw new BadRequestException('Task already assigned to work order');
+      }
+      const foundWorker = await this.userModel
+        .findById(workerAssignedId)
+        .exec();
+      if (!foundWorker) {
+        throw new NotFoundException('User not found');
+      }
+      foundTask.workerAssigned = foundWorker;
+      await foundTask.save();
+      tasks.push(foundTask);
+    }
+    return this.workOrderModel.create({ tasks: tasks, date: new Date() });
+  }
+
+  async getCurrentWorkOrder() {
+    return this.workOrderModel.findOne().sort({ date: -1 }).exec();
   }
 }

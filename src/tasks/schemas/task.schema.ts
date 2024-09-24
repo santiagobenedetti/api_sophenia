@@ -16,7 +16,7 @@ export class Task {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ default: TaskStatusEnum.PENDING })
   status: TaskStatusEnum;
 
   @Prop({ required: true })
@@ -26,7 +26,7 @@ export class Task {
   workerAssigned?: User;
 
   @Prop()
-  estimatedTimeToComplete?: number;
+  estimatedHours?: number;
 
   @Prop()
   taskReport?: TaskReport;
