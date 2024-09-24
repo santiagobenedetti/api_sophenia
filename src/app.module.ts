@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { OpenAIModule } from './openai/openai.module';
 import { NotificatorModule } from './notificator/notificator.module';
+import { TasksModule } from './tasks/tasks.module';
+import { WorkOrdersModule } from './workOrders/workOrders.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { NotificatorModule } from './notificator/notificator.module';
     UserModule,
     AuthModule,
     NotificatorModule,
+    TasksModule,
+    WorkOrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
