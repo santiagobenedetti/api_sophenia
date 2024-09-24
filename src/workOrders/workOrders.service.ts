@@ -48,12 +48,29 @@ export class WorkOrdersService {
       }
       foundTask.workerAssigned = foundWorker;
       await foundTask.save();
-      tasks.push(foundTask);
     }
-    return this.workOrderModel.create({ tasks: tasks, date: new Date() });
+    return this.workOrderModel.create({
+      tasksIds: workOrderTasks.map(({ taskId }) => taskId),
+      date: new Date(),
+    });
   }
 
   async getCurrentWorkOrder() {
-    return this.workOrderModel.findOne().sort({ date: -1 }).exec();
+    const currentWorkOrder = await this.workOrderModel
+      .findOne()
+      .sort({ date: -1 })
+      .exec();
+
+    const tasks = await this.taskModel
+      .find({ _id: { $in: currentWorkOrder.tasksIds } })
+      .exec();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { tasksIds, ...workOrderData } = currentWorkOrder.toObject();
+
+    return {
+      ...workOrderData,
+      tasks,
+    };
   }
 }

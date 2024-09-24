@@ -42,4 +42,28 @@ export class TasksService {
   async createTasks({ tasks }: CreateTasksDto) {
     return this.taskModel.create(tasks);
   }
+
+  async updateTaskStatus(taskId: string, status: TaskStatusEnum) {
+    const task = await this.taskModel.findById(taskId).exec();
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    task.status = status;
+    await task.save();
+    return task;
+  }
+
+  async deleteTask(taskId: string) {
+    const task = await this.taskModel.findById(taskId).exec();
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    if (task.status !== TaskStatusEnum.PENDING) {
+      throw new Error('Cannot delete a task that is not pending');
+    }
+
+    await task.deleteOne();
+  }
 }
