@@ -22,6 +22,7 @@ import { RolesEnum } from 'src/auth/enums';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { CreateTasksDto } from './dtos/createTasks.dto';
 import { UpdateTaskStatusDto } from './dtos/updateTaskStatus.dto';
+import { CompleteTaskDto } from './dtos/completeTask.dto';
 
 @ApiTags(TasksRoutesEnum.tasks)
 @Controller(TasksRoutesEnum.tasks)
@@ -82,6 +83,24 @@ export class TasksController {
     { status }: UpdateTaskStatusDto,
   ) {
     return this.taskService.updateTaskStatus(taskId, status);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Post(TasksRoutesEnum.completeTask)
+  async completeTask(
+    @Param('id') taskId: string,
+    @Body(
+      new ValidationPipe({
+        expectedType: CompleteTaskDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    completeTaskDto: CompleteTaskDto,
+  ) {
+    return this.taskService.completeTask(taskId, completeTaskDto);
   }
 
   @UseGuards(JwtGuard, RoleGuard)

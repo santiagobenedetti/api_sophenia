@@ -4,4 +4,5 @@ export enum TasksRoutesEnum {
   taskById = '/:id',
   backlog = '/backlog',
   taskStatus = '/:id/status',
+  completeTask = '/:id/complete',
 }
