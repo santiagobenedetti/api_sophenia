@@ -5,7 +5,7 @@ export const mapGetUserData = (user: User) => {
     id: user._id,
     fullname: user.fullname,
     email: user.email,
-    role: user.wineRole,
+    role: user.roles[0],
     status: user.status,
   };
 };

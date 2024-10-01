@@ -1,6 +1,5 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { WineRoleEnum } from '../enums';
 import { Exclude } from 'class-transformer';
 import { RolesEnum } from 'src/auth/enums';
 import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
@@ -20,14 +19,6 @@ export class User {
 
   @Prop({ required: true })
   fullname: string;
-
-  // This refers to Gerencial / Operativo
-  @Prop({
-    type: String,
-    required: true,
-    enum: WineRoleEnum,
-  })
-  wineRole: WineRoleEnum;
 
   @Prop({
     type: [String],
