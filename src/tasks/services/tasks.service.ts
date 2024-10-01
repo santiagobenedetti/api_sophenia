@@ -97,4 +97,13 @@ export class TasksService {
 
     await task.deleteOne();
   }
+
+  async rateTask(taskId: string, rating: number): Promise<Task> {
+    const task = await this.taskModel.findById(taskId);
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+    task.rating = rating;
+    return task.save();
+  }
 }
