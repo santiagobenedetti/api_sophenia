@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 import { RolesEnum } from 'src/auth/enums';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { CreateWorkOrderDto } from './dtos/createWorkOrder.dto';
+import { GetWorkOrdersQueryParams } from 'src/shared/types/workOrders';
 
 @ApiTags(WorkOrdersRoutesEnum.workOrders)
 @Controller(WorkOrdersRoutesEnum.workOrders)
@@ -53,5 +55,14 @@ export class WorkOrdersController {
     createWorkOrderDto: CreateWorkOrderDto,
   ) {
     return this.workOrdersService.createWorkOrder(createWorkOrderDto);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Get()
+  async getWorkOrders(
+    @Query() getWorkOrdersQueryParams: GetWorkOrdersQueryParams,
+  ) {
+    return this.workOrdersService.getWorkOrders(getWorkOrdersQueryParams);
   }
 }

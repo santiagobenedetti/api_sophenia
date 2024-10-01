@@ -56,8 +56,17 @@ export class UserService {
     return user.updateOne(updateUserDto);
   }
 
-  async getUsers({ limit, offset }: GetUsersQueryParams) {
-    const users = await this.userModel.find().skip(offset).limit(limit).exec();
+  async getUsers({ limit, offset, role }: GetUsersQueryParams) {
+    const query: any = {};
+    if (role) {
+      query.roles = role;
+    }
+
+    const users = await this.userModel
+      .find(query)
+      .skip(offset)
+      .limit(limit)
+      .exec();
     const total = await this.userModel.countDocuments();
     return {
       data: users,

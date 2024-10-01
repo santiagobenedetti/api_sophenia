@@ -9,6 +9,8 @@ import { WorkOrder } from './schemas/workOrder.schema';
 import { CreateWorkOrderDto } from './dtos/createWorkOrder.dto';
 import { Task } from 'src/tasks/schemas/task.schema';
 import { User } from 'src/user/schemas/user.schema';
+import { GetWorkOrdersQueryParams } from 'src/shared/types/workOrders';
+import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 
 @Injectable()
 export class WorkOrdersService {
@@ -27,7 +29,14 @@ export class WorkOrdersService {
       throw new NotFoundException('Task not found');
     }
 
-    return workOrder;
+    const tasks = await this.taskModel
+      .find({ _id: { $in: workOrder.tasksIds } })
+      .exec();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { tasksIds, ...filteredWorkOrder } = workOrder.toObject();
+
+    return { ...filteredWorkOrder, tasks };
   }
 
   async createWorkOrder({ workOrderTasks }: CreateWorkOrderDto) {
@@ -71,6 +80,19 @@ export class WorkOrdersService {
     return {
       ...workOrderData,
       tasks,
+    };
+  }
+
+  async getWorkOrders({ limit, offset }: GetWorkOrdersQueryParams) {
+    const workOrders = await this.workOrderModel
+      .find()
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    const total = await this.workOrderModel.countDocuments();
+    return {
+      data: workOrders,
+      pagination: mapPagination(limit, offset, total),
     };
   }
 }

@@ -23,11 +23,12 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { CreateTasksDto } from '../dtos/createTasks.dto';
 import { UpdateTaskStatusDto } from '../dtos/updateTaskStatus.dto';
 import { CompleteTaskDto } from '../dtos/completeTask.dto';
+import { RateTaskDto } from '../dtos/taskRate.dto';
 
 @ApiTags(TasksRoutesEnum.tasks)
 @Controller(TasksRoutesEnum.tasks)
 export class TasksController {
-  constructor(private readonly taskService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) {}
 
   @UseGuards(JwtGuard, RoleGuard)
   @Roles(RolesEnum.ADMIN)
@@ -38,7 +39,7 @@ export class TasksController {
     @Query() getBacklogTasksQueryParams: GetBacklogTasksQueryParams,
   ) {
     // TODO: Map the response to a DTO
-    return this.taskService.getBacklogTasks(getBacklogTasksQueryParams);
+    return this.tasksService.getBacklogTasks(getBacklogTasksQueryParams);
   }
 
   @UseGuards(JwtGuard)
@@ -46,7 +47,7 @@ export class TasksController {
   @Get(TasksRoutesEnum.taskById)
   async getTaskById(@Param('id') taskId: string) {
     // TODO: Map the response to a DTO
-    return this.taskService.getTaskById(taskId);
+    return this.tasksService.getTaskById(taskId);
   }
 
   @UseGuards(JwtGuard, RoleGuard)
@@ -64,7 +65,7 @@ export class TasksController {
     )
     createTasks: CreateTasksDto,
   ) {
-    return this.taskService.createTasks(createTasks);
+    return this.tasksService.createTasks(createTasks);
   }
 
   @UseGuards(JwtGuard)
@@ -82,7 +83,7 @@ export class TasksController {
     )
     { status }: UpdateTaskStatusDto,
   ) {
-    return this.taskService.updateTaskStatus(taskId, status);
+    return this.tasksService.updateTaskStatus(taskId, status);
   }
 
   @UseGuards(JwtGuard)
@@ -100,7 +101,7 @@ export class TasksController {
     )
     completeTaskDto: CompleteTaskDto,
   ) {
-    return this.taskService.completeTask(taskId, completeTaskDto);
+    return this.tasksService.completeTask(taskId, completeTaskDto);
   }
 
   @UseGuards(JwtGuard, RoleGuard)
@@ -108,6 +109,24 @@ export class TasksController {
   @ApiBearerAuth('access-token')
   @Delete(TasksRoutesEnum.taskById)
   async deleteTask(@Param('id') taskId: string) {
-    return this.taskService.deleteTask(taskId);
+    return this.tasksService.deleteTask(taskId);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Patch(':id/rate')
+  async rateTask(
+    @Param('id') taskId: string,
+    @Body(
+      new ValidationPipe({
+        expectedType: RateTaskDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    rateTaskDto: RateTaskDto,
+  ) {
+    return this.tasksService.rateTask(taskId, rateTaskDto.rating);
   }
 }

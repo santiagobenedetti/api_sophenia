@@ -12,7 +12,6 @@ import { AuthRoutesEnum } from './enums/authRoutes.enum';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
-  CreatePasswordDto,
   ForgotPasswordDto,
   LoginDto,
   RegisterDto,
