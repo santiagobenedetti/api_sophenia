@@ -35,6 +35,7 @@
     "generate-password": "^1.7.1",
     "handlebars": "^4.7.8",
     "mongoose": "^8.5.1",
+    "multer-gridfs-storage": "^5.0.2",
     "nodemailer": "^6.9.14",
     "openai": "^4.53.2",
     "passport": "^0.7.0",

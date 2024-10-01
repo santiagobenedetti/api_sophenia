@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task } from './schemas/task.schema';
+import { Task } from '../schemas/task.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TaskStatusEnum } from './enums/taskStatus.enum';
+import { TaskStatusEnum } from '../enums/taskStatus.enum';
 import { GetBacklogTasksQueryParams } from 'src/shared/types/tasks';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
-import { CreateTasksDto } from './dtos/createTasks.dto';
+import { CreateTasksDto } from '../dtos/createTasks.dto';
+import { CompleteTaskDto } from '../dtos/completeTask.dto';
+import { TaskReport } from '../schemas/taskReport.schema';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectModel(Task.name) private readonly taskModel: Model<Task>,
+    @InjectModel(TaskReport.name)
+    private readonly taskReportModel: Model<TaskReport>,
   ) {}
 
   async getTaskById(taskId: string) {
@@ -50,6 +54,33 @@ export class TasksService {
     }
 
     task.status = status;
+    await task.save();
+    return task;
+  }
+
+  async completeTask(taskId: string, completeTaskDto: CompleteTaskDto) {
+    const task = await this.taskModel.findById(taskId).exec();
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    if (
+      task.status == TaskStatusEnum.DONE ||
+      task.status == TaskStatusEnum.IN_REVIEW
+    ) {
+      throw new Error('Cannot complete a task that is done or in review');
+    }
+
+    if (task.requiresTaskReport && !completeTaskDto.detail) {
+      throw new Error('Task report is required');
+    }
+
+    // Asumo que todas las tasks van a review, si no es así, podemos cambiar esto
+    task.status = TaskStatusEnum.IN_REVIEW;
+    task.taskReport = await this.taskReportModel.create({
+      detail: completeTaskDto.detail,
+      photoUrl: completeTaskDto.photoUrl,
+    });
     await task.save();
     return task;
   }

@@ -1,7 +1,9 @@
 export enum TasksRoutesEnum {
   tasks = '/tasks',
 
-  taskById = '/:id',
   backlog = '/backlog',
+  uploadImage = '/upload-image',
+  taskById = '/:id',
   taskStatus = '/:id/status',
+  completeTask = '/:id/complete',
 }

@@ -12,16 +12,17 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { TasksRoutesEnum } from './enums/taskRoutes.enum';
+import { TasksRoutesEnum } from '../enums/taskRoutes.enum';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { TasksService } from './tasks.service';
+import { TasksService } from '../services/tasks.service';
 import { PaginationPipe } from 'src/shared/pipes/pagination.pipe';
 import { GetBacklogTasksQueryParams } from 'src/shared/types/tasks';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { RolesEnum } from 'src/auth/enums';
 import { Roles } from 'src/auth/decorators/role.decorator';
-import { CreateTasksDto } from './dtos/createTasks.dto';
-import { UpdateTaskStatusDto } from './dtos/updateTaskStatus.dto';
+import { CreateTasksDto } from '../dtos/createTasks.dto';
+import { UpdateTaskStatusDto } from '../dtos/updateTaskStatus.dto';
+import { CompleteTaskDto } from '../dtos/completeTask.dto';
 
 @ApiTags(TasksRoutesEnum.tasks)
 @Controller(TasksRoutesEnum.tasks)
@@ -82,6 +83,24 @@ export class TasksController {
     { status }: UpdateTaskStatusDto,
   ) {
     return this.taskService.updateTaskStatus(taskId, status);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Post(TasksRoutesEnum.completeTask)
+  async completeTask(
+    @Param('id') taskId: string,
+    @Body(
+      new ValidationPipe({
+        expectedType: CompleteTaskDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    completeTaskDto: CompleteTaskDto,
+  ) {
+    return this.taskService.completeTask(taskId, completeTaskDto);
   }
 
   @UseGuards(JwtGuard, RoleGuard)
