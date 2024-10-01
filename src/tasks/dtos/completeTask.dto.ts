@@ -13,7 +13,6 @@ export class CompleteTaskDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  @IsUrl()
   @IsOptional()
   photoUrl?: string;
 }

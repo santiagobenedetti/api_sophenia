@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task } from './schemas/task.schema';
+import { Task } from '../schemas/task.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TaskStatusEnum } from './enums/taskStatus.enum';
+import { TaskStatusEnum } from '../enums/taskStatus.enum';
 import { GetBacklogTasksQueryParams } from 'src/shared/types/tasks';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
-import { CreateTasksDto } from './dtos/createTasks.dto';
-import { CompleteTaskDto } from './dtos/completeTask.dto';
-import { TaskReport } from './schemas/taskReport.schema';
+import { CreateTasksDto } from '../dtos/createTasks.dto';
+import { CompleteTaskDto } from '../dtos/completeTask.dto';
+import { TaskReport } from '../schemas/taskReport.schema';
 
 @Injectable()
 export class TasksService {
