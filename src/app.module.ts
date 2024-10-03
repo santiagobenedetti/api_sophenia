@@ -10,6 +10,7 @@ import { OpenAIModule } from './openai/openai.module';
 import { NotificatorModule } from './notificator/notificator.module';
 import { TasksModule } from './tasks/tasks.module';
 import { WorkOrdersModule } from './workOrders/workOrders.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WorkOrdersModule } from './workOrders/workOrders.module';
     NotificatorModule,
     TasksModule,
     WorkOrdersModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
