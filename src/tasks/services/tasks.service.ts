@@ -8,6 +8,7 @@ import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 import { CreateTasksDto } from '../dtos/createTasks.dto';
 import { CompleteTaskDto } from '../dtos/completeTask.dto';
 import { TaskReport } from '../schemas/taskReport.schema';
+import { OpenAIService } from 'src/openai/openai.service';
 
 @Injectable()
 export class TasksService {
@@ -15,6 +16,7 @@ export class TasksService {
     @InjectModel(Task.name) private readonly taskModel: Model<Task>,
     @InjectModel(TaskReport.name)
     private readonly taskReportModel: Model<TaskReport>,
+    private readonly openAIService: OpenAIService,
   ) {}
 
   async getTaskById(taskId: string) {
@@ -105,5 +107,15 @@ export class TasksService {
     }
     task.rating = rating;
     return task.save();
+  }
+
+  async suggestTasks() {
+    const tasks = await this.openAIService.suggestTasksToBeCreated();
+    return tasks.map((task) => ({
+      title: task.title,
+      description: task.description,
+      requiresTaskReport: task.requiresTaskReport,
+      estimatedHours: task.estimatedHours,
+    }));
   }
 }
