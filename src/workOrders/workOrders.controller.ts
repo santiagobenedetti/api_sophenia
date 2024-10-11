@@ -24,7 +24,8 @@ import { SuggestWorkOrdersAssingationsDto } from './dtos/suggestWorkOrdersAssing
 export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Post(WorkOrdersRoutesEnum.workOrderTasksSuggest)
   async suggestWorkOrderAssignations(
@@ -60,7 +61,8 @@ export class WorkOrdersController {
     return this.workOrdersService.getWorkOrderById(workOrderId);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Post()
   async createWorkOrder(
@@ -77,7 +79,8 @@ export class WorkOrdersController {
     return this.workOrdersService.createWorkOrder(createWorkOrderDto);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Get()
   async getWorkOrders(
