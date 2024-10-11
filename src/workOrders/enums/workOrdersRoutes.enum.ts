@@ -4,4 +4,6 @@ export enum WorkOrdersRoutesEnum {
   workOrderById = '/:id',
 
   workOrderCurrent = '/current',
+
+  workOrderTasksSuggest = '/suggest',
 }

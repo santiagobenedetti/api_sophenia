@@ -44,7 +44,7 @@ export class TasksController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
-  @Get(TasksRoutesEnum.suggestTasks)
+  @Post(TasksRoutesEnum.suggestTasks)
   async suggestTasks() {
     return this.tasksService.suggestTasks();
   }

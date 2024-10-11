@@ -11,6 +11,8 @@ import { Task } from 'src/tasks/schemas/task.schema';
 import { User } from 'src/user/schemas/user.schema';
 import { GetWorkOrdersQueryParams } from 'src/shared/types/workOrders';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
+import { OpenAIService } from 'src/openai/openai.service';
+import { SuggestWorkOrdersAssingationsDto } from './dtos/suggestWorkOrdersAssingations.dto';
 
 @Injectable()
 export class WorkOrdersService {
@@ -21,6 +23,7 @@ export class WorkOrdersService {
     private readonly taskModel: Model<Task>,
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+    private readonly openAIService: OpenAIService,
   ) {}
 
   async getWorkOrderById(workOrderId: string) {
@@ -94,5 +97,35 @@ export class WorkOrdersService {
       data: workOrders,
       pagination: mapPagination(limit, offset, total),
     };
+  }
+
+  async suggestWorkOrderAssignations({
+    taskIds,
+    workersIds,
+  }: SuggestWorkOrdersAssingationsDto) {
+    const tasks = await this.taskModel.find({
+      _id: { $in: taskIds },
+    });
+
+    const workers = await this.userModel.find({
+      _id: { $in: workersIds },
+    });
+
+    const workOrderTasks =
+      await this.openAIService.suggestWorkOrderTasksAssignations({
+        tasks: tasks.map((task) => ({
+          id: task._id.toString(),
+          title: task.title,
+          description: task.description,
+          requiresTaskReport: task.requiresTaskReport,
+          estimatedHours: task.estimatedHours,
+        })),
+        workers: workers.map((worker) => ({
+          id: worker._id.toString(),
+          fullname: worker.fullname,
+        })),
+      });
+
+    return workOrderTasks;
   }
 }

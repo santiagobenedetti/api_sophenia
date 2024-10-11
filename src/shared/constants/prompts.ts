@@ -1,5 +1,5 @@
 // TODO: Add more prompts for different scenarios
-export const PROMPTS = {
+export const PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED = {
   GENERAL_MANAGEMENT: {
     SYSTEM_CONTENT:
       'Eres un sistema experto en la gestión de bodegas de vino. Tu objetivo es ayudar a planificar tareas diarias de los operarios de manera eficiente, basándote en las actividades típicas de producción y mantenimiento de la bodega.',
