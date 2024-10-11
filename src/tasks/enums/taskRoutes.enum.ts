@@ -6,4 +6,6 @@ export enum TasksRoutesEnum {
   taskById = '/:id',
   taskStatus = '/:id/status',
   completeTask = '/:id/complete',
+  rateTask = '/:id/rate',
+  suggestTasks = '/suggest',
 }

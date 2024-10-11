@@ -1,4 +1,4 @@
-import { Injectable, StreamableFile, NotFoundException } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { GridFSBucket, ObjectId } from 'mongodb';
