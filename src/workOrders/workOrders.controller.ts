@@ -17,11 +17,32 @@ import { RolesEnum } from 'src/auth/enums';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { CreateWorkOrderDto } from './dtos/createWorkOrder.dto';
 import { GetWorkOrdersQueryParams } from 'src/shared/types/workOrders';
+import { SuggestWorkOrdersAssingationsDto } from './dtos/suggestWorkOrdersAssingations.dto';
 
 @ApiTags(WorkOrdersRoutesEnum.workOrders)
 @Controller(WorkOrdersRoutesEnum.workOrders)
 export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
+
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Post(WorkOrdersRoutesEnum.workOrderTasksSuggest)
+  async suggestWorkOrderAssignations(
+    @Body(
+      new ValidationPipe({
+        expectedType: SuggestWorkOrdersAssingationsDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    suggestWorkOrdersAssingationsDto: SuggestWorkOrdersAssingationsDto,
+  ) {
+    return this.workOrdersService.suggestWorkOrderAssignations(
+      suggestWorkOrdersAssingationsDto,
+    );
+  }
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
@@ -40,7 +61,8 @@ export class WorkOrdersController {
     return this.workOrdersService.getWorkOrderById(workOrderId);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Post()
   async createWorkOrder(
@@ -57,7 +79,8 @@ export class WorkOrdersController {
     return this.workOrdersService.createWorkOrder(createWorkOrderDto);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
   @Get()
   async getWorkOrders(

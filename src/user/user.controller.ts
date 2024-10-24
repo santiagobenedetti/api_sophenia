@@ -36,6 +36,14 @@ export class UserController {
     return this.userService.getUserById(userId);
   }
 
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Get(UserRoutesEnum.workers)
+  async getWorkerUsers() {
+    return this.userService.getWorkerUsers();
+  }
+
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
   @Patch(UserRoutesEnum.userById)
