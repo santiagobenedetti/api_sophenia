@@ -1,58 +1,59 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
-import { ChatCompletion, ChatCompletionMessageParam } from 'openai/resources';
-import { MessageType } from './types';
-import { ConfigService } from '@nestjs/config';
+
+import { zodResponseFormat } from 'openai/helpers/zod';
+import { PROMPTS } from 'src/shared/constants/prompts';
+import { z } from 'zod';
 
 @Injectable()
 export class OpenAIService {
   private openai: OpenAI;
-
-  constructor(private configService: ConfigService) {
-    // TODO
-    // this.openai = new OpenAI({
-    //   apiKey: configService.get('OPENAI_API_KEY'),
-    // });
+  constructor() {
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
   }
 
-  async getRecommendedTasks() {
-    // TODO
-    try {
-      const messages: MessageType[] = [];
-      // Convert message history (if needed) to the format expected by the OpenAI API
-      const history = messages.map(
-        (message): ChatCompletionMessageParam => ({
-          role: message.ai ? 'assistant' : 'user',
-          content: message.text,
-        }),
-      );
+  async suggestTasksToBeCreated(): Promise<
+    {
+      title?: string;
+      description?: string;
+      requiresTaskReport?: boolean;
+      estimatedHours?: number;
+    }[]
+  > {
+    const Task = z.object({
+      title: z.string(),
+      description: z.string(),
+      requiresTaskReport: z.boolean(),
+      estimatedHours: z.number(),
+    });
 
-      const prompt = 'Genera...';
-      // Make a request to the ChatGPT model
-      const completion: ChatCompletion =
-        await this.openai.chat.completions.create({
-          model: 'gpt-4',
-          messages: [
-            {
-              role: 'system',
-              content: prompt,
-            },
-            ...history,
-          ],
-          temperature: 0.3,
-          max_tokens: 1000,
-        });
+    const Tasks = z.object({
+      tasks: z.array(Task),
+    });
 
-      // Extract the content from the response
-      const [content] = completion.choices.map(
-        (choice) => choice.message.content,
-      );
+    // TODO: Find a way to be able to use an argument to select the prompt
+    const prompts = PROMPTS.GENERAL_MANAGEMENT;
 
-      return content;
-    } catch (e) {
-      // Log and propagate the error
-      console.error(e);
-      throw new ServiceUnavailableException('Failed request to ChatGPT');
-    }
+    const systemContent = prompts.SYSTEM_CONTENT;
+
+    const userContent = prompts.USER_CONTENT;
+
+    const completion = await this.openai.beta.chat.completions.parse({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        { role: 'user', content: userContent },
+      ],
+      response_format: zodResponseFormat(Tasks, 'tasks'),
+    });
+
+    const parsedData = completion.choices[0].message.parsed;
+
+    return parsedData.tasks;
   }
 }
