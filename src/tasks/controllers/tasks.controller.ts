@@ -44,6 +44,13 @@ export class TasksController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
+  @Post(TasksRoutesEnum.suggestTasks)
+  async suggestTasks() {
+    return this.tasksService.suggestTasks();
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
   @Get(TasksRoutesEnum.taskById)
   async getTaskById(@Param('id') taskId: string) {
     // TODO: Map the response to a DTO
@@ -114,7 +121,7 @@ export class TasksController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
-  @Patch(':id/rate')
+  @Patch(TasksRoutesEnum.rateTask)
   async rateTask(
     @Param('id') taskId: string,
     @Body(

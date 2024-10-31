@@ -12,6 +12,7 @@ import { GetUsersQueryParams } from 'src/shared/types/users';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 import { isUserDeleted } from 'src/shared/models/users';
+import { RolesEnum } from 'src/auth/enums';
 
 @Injectable()
 export class UserService {
@@ -85,5 +86,9 @@ export class UserService {
     }
 
     return user.updateOne({ status: UserStatusEnum.DELETED });
+  }
+
+  async getWorkerUsers() {
+    return this.userModel.find({ roles: RolesEnum.WORKER }).exec();
   }
 }
