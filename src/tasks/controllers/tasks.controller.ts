@@ -44,6 +44,13 @@ export class TasksController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
+  @Get(TasksRoutesEnum.getTasksAssignedToWorker)
+  async getTasksAssignedToWorker(@Param('workerId') workerId: string) {
+    return this.tasksService.getTasksAssignedToWorker(workerId);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
   @Post(TasksRoutesEnum.suggestTasks)
   async suggestTasks() {
     return this.tasksService.suggestTasks();

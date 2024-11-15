@@ -12,9 +12,9 @@ import { mapTasksAssignationPrompts } from 'src/shared/models/prompts';
 export class OpenAIService {
   private openai: OpenAI;
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // this.openai = new OpenAI({
+    //   apiKey: process.env.OPENAI_API_KEY,
+    // });
   }
 
   async suggestTasksToBeCreated() {

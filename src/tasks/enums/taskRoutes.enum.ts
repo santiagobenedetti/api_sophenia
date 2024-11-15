@@ -8,4 +8,5 @@ export enum TasksRoutesEnum {
   completeTask = '/:id/complete',
   rateTask = '/:id/rate',
   suggestTasks = '/suggest',
+  getTasksAssignedToWorker = '/worker/:workerId',
 }

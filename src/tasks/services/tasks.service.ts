@@ -45,6 +45,13 @@ export class TasksService {
     };
   }
 
+  async getTasksAssignedToWorker(workerId: string) {
+    const tasks = await this.taskModel
+      .find({ 'workerAssigned._id': workerId })
+      .exec();
+    return tasks;
+  }
+
   async createTasks({ tasks }: CreateTasksDto) {
     return this.taskModel.create(tasks);
   }
