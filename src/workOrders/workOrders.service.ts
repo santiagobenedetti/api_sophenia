@@ -86,6 +86,28 @@ export class WorkOrdersService {
     };
   }
 
+  async getCurrentWorkOrderForWorker(workerId: string) {
+    const currentWorkOrder = await this.workOrderModel
+      .findOne()
+      .sort({ date: -1 })
+      .exec();
+
+    const tasks = await this.taskModel
+      .find({
+        _id: { $in: currentWorkOrder.tasksIds },
+        'workerAssigned._id': workerId,
+      })
+      .exec();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { tasksIds, ...workOrderData } = currentWorkOrder.toObject();
+
+    return {
+      ...workOrderData,
+      tasks,
+    };
+  }
+
   async getWorkOrders({ limit, offset }: GetWorkOrdersQueryParams) {
     const workOrders = await this.workOrderModel
       .find()

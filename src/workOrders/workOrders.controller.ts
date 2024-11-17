@@ -52,6 +52,14 @@ export class WorkOrdersController {
     return this.workOrdersService.getCurrentWorkOrder();
   }
 
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
+  @Get(WorkOrdersRoutesEnum.workOrderCurrentByWorker)
+  async getCurrentWorkOrderForWorker(@Param('workerId') workerId: string) {
+    // TODO: Map the response to a DTO
+    return this.workOrdersService.getCurrentWorkOrderForWorker(workerId);
+  }
+
   @UseGuards(JwtGuard, RoleGuard)
   @Roles(RolesEnum.ADMIN)
   @ApiBearerAuth('access-token')
