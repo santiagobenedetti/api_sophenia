@@ -123,8 +123,9 @@ export class TasksService {
     return task.save();
   }
 
-  async suggestTasks() {
-    const tasks = await this.openAIService.suggestTasksToBeCreated();
+  async suggestTasks(seasonMoment: string) {
+    const tasks =
+      await this.openAIService.suggestTasksToBeCreated(seasonMoment);
     return tasks.map((task) => ({
       title: task.title,
       description: task.description,
