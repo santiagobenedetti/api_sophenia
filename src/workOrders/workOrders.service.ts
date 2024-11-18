@@ -72,7 +72,7 @@ export class WorkOrdersService {
   async getCurrentWorkOrder() {
     const currentWorkOrder = await this.workOrderModel
       .findOne()
-      .sort({ date: -1 })
+      .sort({ startDate: -1 })
       .exec();
 
     const tasks = await this.taskModel
@@ -91,7 +91,7 @@ export class WorkOrdersService {
   async getCurrentWorkOrderForWorker(workerId: string) {
     const currentWorkOrder = await this.workOrderModel
       .findOne()
-      .sort({ date: -1 })
+      .sort({ startDate: -1 })
       .exec();
 
     const tasks = await this.taskModel
