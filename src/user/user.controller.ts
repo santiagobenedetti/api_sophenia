@@ -21,8 +21,6 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { RolesEnum } from 'src/auth/enums';
 import { PaginationPipe } from 'src/shared/pipes/pagination.pipe';
 import { GetUsersQueryParams } from 'src/shared/types/users';
-import { mapGetUserData } from './mappers/getUser.mapper';
-import { mapGetUsersData } from './mappers/getUsers.mapper';
 
 @ApiTags(UserRoutesEnum.user)
 @Controller(UserRoutesEnum.user)
@@ -69,11 +67,7 @@ export class UserController {
   @UsePipes(new PaginationPipe())
   @Get()
   async getUsers(@Query() getUsersQueryParams: GetUsersQueryParams) {
-    const response = await this.userService.getUsers(getUsersQueryParams);
-    return {
-      ...response,
-      data: mapGetUsersData(response.data),
-    };
+    return await this.userService.getUsers(getUsersQueryParams);
   }
 
   @UseGuards(JwtGuard, RoleGuard)
@@ -89,7 +83,14 @@ export class UserController {
   @ApiBearerAuth('access-token')
   @Get(UserRoutesEnum.userById)
   async getUserById(@Param('id') userId: string) {
-    const user = await this.userService.getUserById(userId);
-    return mapGetUserData(user);
+    return await this.userService.getUserById(userId);
+  }
+
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Get(UserRoutesEnum.workersAvailable)
+  async getAvailableWorkers() {
+    return this.userService.getAvailableWorkers();
   }
 }

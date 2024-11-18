@@ -107,17 +107,25 @@ export class TasksService {
     await task.deleteOne();
   }
 
-  async rateTask(taskId: string, rating: number): Promise<Task> {
+  async rateTask(
+    taskId: string,
+    rating: number,
+    ratingComment?: string,
+  ): Promise<Task> {
     const task = await this.taskModel.findById(taskId);
     if (!task) {
       throw new NotFoundException('Task not found');
     }
     task.rating = rating;
+    if (ratingComment) {
+      task.ratingComment = ratingComment;
+    }
     return task.save();
   }
 
-  async suggestTasks() {
-    const tasks = await this.openAIService.suggestTasksToBeCreated();
+  async suggestTasks(seasonMoment: string) {
+    const tasks =
+      await this.openAIService.suggestTasksToBeCreated(seasonMoment);
     return tasks.map((task) => ({
       title: task.title,
       description: task.description,

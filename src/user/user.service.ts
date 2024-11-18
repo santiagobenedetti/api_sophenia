@@ -36,6 +36,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto & { password?: string }) {
     const newUser = new this.userModel(createUserDto);
     newUser.roles = [createUserDto.role];
+    newUser.availability = true;
     await newUser.save();
     Logger.log(
       `Created user with data: ${JSON.stringify(createUserDto)}`,
@@ -52,6 +53,11 @@ export class UserService {
     const user = await this.userModel.findOne({ _id: userId });
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (updateUserDto.role) {
+      updateUserDto.roles = [updateUserDto.role];
+      delete updateUserDto.role;
     }
 
     return user.updateOne(updateUserDto);
@@ -90,5 +96,17 @@ export class UserService {
 
   async getWorkerUsers() {
     return this.userModel.find({ roles: RolesEnum.WORKER }).exec();
+  }
+
+  async getAdminUsers() {
+    return this.userModel.find({ roles: RolesEnum.ADMIN }).exec();
+  }
+
+  async getAvailableWorkers() {
+    const workers = await this.userModel
+      .find({ roles: RolesEnum.WORKER, availability: true })
+      .exec();
+
+    return workers;
   }
 }
