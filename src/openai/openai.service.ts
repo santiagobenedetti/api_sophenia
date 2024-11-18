@@ -22,7 +22,7 @@ export class OpenAIService {
       title: z.string(),
       description: z.string(),
       requiresTaskReport: z.boolean(),
-      estimatedHours: z.number(),
+      estimatedHoursToComplete: z.number(),
     });
 
     const Tasks = z.object({

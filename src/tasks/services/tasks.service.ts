@@ -130,7 +130,7 @@ export class TasksService {
       title: task.title,
       description: task.description,
       requiresTaskReport: task.requiresTaskReport,
-      estimatedHours: task.estimatedHours,
+      estimatedHoursToComplete: task.estimatedHoursToComplete,
     }));
   }
 }

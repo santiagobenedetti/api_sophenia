@@ -22,11 +22,14 @@ export class Task {
   @Prop({ required: true })
   requiresTaskReport: boolean;
 
-  @Prop()
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   workerAssigned?: User;
 
   @Prop()
-  estimatedHours?: number;
+  estimatedHoursToComplete?: number;
+
+  @Prop()
+  realHoursToComplete?: number;
 
   @Prop()
   taskReport?: TaskReport;

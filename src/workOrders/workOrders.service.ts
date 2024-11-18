@@ -142,7 +142,7 @@ export class WorkOrdersService {
           title: task.title,
           description: task.description,
           requiresTaskReport: task.requiresTaskReport,
-          estimatedHours: task.estimatedHours,
+          estimatedHoursToComplete: task.estimatedHoursToComplete,
         })),
         workers: workers.map((worker) => ({
           id: worker._id.toString(),
