@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsInt, Min, Max } from 'class-validator';
+import { IsInt, Min, Max, IsOptional } from 'class-validator';
 
 export class RateTaskDto {
   @ApiProperty({ minimum: 1, maximum: 10 })
@@ -9,4 +9,9 @@ export class RateTaskDto {
   @Min(1)
   @Max(10)
   rating: number;
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsOptional()
+  ratingComment?: string;
 }

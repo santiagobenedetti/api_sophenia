@@ -141,6 +141,10 @@ export class TasksController {
     )
     rateTaskDto: RateTaskDto,
   ) {
-    return this.tasksService.rateTask(taskId, rateTaskDto.rating);
+    return this.tasksService.rateTask(
+      taskId,
+      rateTaskDto.rating,
+      rateTaskDto.ratingComment,
+    );
   }
 }
