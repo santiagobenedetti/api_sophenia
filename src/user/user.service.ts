@@ -97,4 +97,16 @@ export class UserService {
   async getWorkerUsers() {
     return this.userModel.find({ roles: RolesEnum.WORKER }).exec();
   }
+
+  async getAdminUsers() {
+    return this.userModel.find({ roles: RolesEnum.ADMIN }).exec();
+  }
+
+  async getAvailableWorkers() {
+    const workers = await this.userModel
+      .find({ roles: RolesEnum.WORKER, availability: true })
+      .exec();
+
+    return workers;
+  }
 }

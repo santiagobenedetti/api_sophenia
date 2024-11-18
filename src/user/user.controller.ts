@@ -85,4 +85,12 @@ export class UserController {
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
   }
+
+  @UseGuards(JwtGuard, RoleGuard)
+  @Roles(RolesEnum.ADMIN)
+  @ApiBearerAuth('access-token')
+  @Get(UserRoutesEnum.workersAvailable)
+  async getAvailableWorkers() {
+    return this.userService.getAvailableWorkers();
+  }
 }
