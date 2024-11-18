@@ -24,6 +24,7 @@ import { CreateTasksDto } from '../dtos/createTasks.dto';
 import { UpdateTaskStatusDto } from '../dtos/updateTaskStatus.dto';
 import { CompleteTaskDto } from '../dtos/completeTask.dto';
 import { RateTaskDto } from '../dtos/taskRate.dto';
+import { SuggestTasksDto } from '../dtos/suggestTasks.dto';
 
 @ApiTags(TasksRoutesEnum.tasks)
 @Controller(TasksRoutesEnum.tasks)
@@ -44,9 +45,26 @@ export class TasksController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access-token')
+  @Get(TasksRoutesEnum.getTasksAssignedToWorker)
+  async getTasksAssignedToWorker(@Param('workerId') workerId: string) {
+    return this.tasksService.getTasksAssignedToWorker(workerId);
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access-token')
   @Post(TasksRoutesEnum.suggestTasks)
-  async suggestTasks() {
-    return this.tasksService.suggestTasks();
+  async suggestTasks(
+    @Body(
+      new ValidationPipe({
+        expectedType: SuggestTasksDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    { seasonMoment }: SuggestTasksDto,
+  ) {
+    return this.tasksService.suggestTasks(seasonMoment);
   }
 
   @UseGuards(JwtGuard)
@@ -134,6 +152,10 @@ export class TasksController {
     )
     rateTaskDto: RateTaskDto,
   ) {
-    return this.tasksService.rateTask(taskId, rateTaskDto.rating);
+    return this.tasksService.rateTask(
+      taskId,
+      rateTaskDto.rating,
+      rateTaskDto.ratingComment,
+    );
   }
 }

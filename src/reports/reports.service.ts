@@ -30,7 +30,7 @@ export class ReportsService {
       title: task.title,
       description: task.description,
       rating: task.rating,
-      estimatedHours: task.estimatedHoursToComplete || 0,
+      estimatedHoursToComplete: task.estimatedHoursToComplete || 0,
       actualHours: task.realHoursToComplete || 0,
     }));
 
@@ -43,7 +43,10 @@ export class ReportsService {
             { key: 'title', header: 'Title' },
             { key: 'description', header: 'Description' },
             { key: 'rating', header: 'Rating' },
-            { key: 'estimatedHours', header: 'Estimated Hours' },
+            {
+              key: 'estimatedHoursToComplete',
+              header: 'Estimated Hours To Complete',
+            },
             { key: 'actualHours', header: 'Actual Hours' },
           ],
         },
@@ -79,7 +82,7 @@ export class ReportsService {
     );
 
     const records = populatedWorkOrders.map((workOrder) => ({
-      date: workOrder.date.toDateString(),
+      date: workOrder.startDate.toDateString(),
       totalTasks: workOrder.tasks.length,
       completedTasks: workOrder.tasks.filter(
         (task) => task.status === TaskStatusEnum.DONE,

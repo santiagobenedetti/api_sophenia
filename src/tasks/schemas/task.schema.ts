@@ -36,6 +36,9 @@ export class Task {
 
   @Prop({ min: 1, max: 10 })
   rating?: number;
+
+  @Prop()
+  ratingComment?: string;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

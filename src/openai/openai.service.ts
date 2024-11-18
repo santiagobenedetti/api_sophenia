@@ -17,21 +17,20 @@ export class OpenAIService {
     });
   }
 
-  async suggestTasksToBeCreated() {
+  async suggestTasksToBeCreated(seasonMoment: string) {
     const Task = z.object({
       title: z.string(),
       description: z.string(),
       requiresTaskReport: z.boolean(),
-      estimatedHours: z.number(),
+      estimatedHoursToComplete: z.number(),
     });
 
     const Tasks = z.object({
       tasks: z.array(Task),
     });
 
-    // TODO: Find a way to be able to use an argument to select the prompt
     const { SYSTEM_CONTENT, USER_CONTENT } =
-      PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED.GENERAL_MANAGEMENT;
+      PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED[seasonMoment];
 
     const completion = await this.openai.beta.chat.completions.parse({
       model: 'gpt-4o-mini',

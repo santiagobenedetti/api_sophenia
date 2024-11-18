@@ -29,6 +29,9 @@ export class User {
 
   @Prop({ required: true, default: UserStatusEnum.ACTIVE })
   status: UserStatusEnum;
+
+  @Prop({ required: true, default: true })
+  availability: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

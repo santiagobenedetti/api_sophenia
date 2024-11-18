@@ -42,7 +42,7 @@ export class WorkOrdersService {
     return { ...filteredWorkOrder, tasks };
   }
 
-  async createWorkOrder({ workOrderTasks }: CreateWorkOrderDto) {
+  async createWorkOrder({ workOrderTasks, name }: CreateWorkOrderDto) {
     const tasks = [];
     for (const { taskId, workerAssignedId } of workOrderTasks) {
       const foundTask = await this.taskModel.findById(taskId).exec();
@@ -63,18 +63,42 @@ export class WorkOrdersService {
     }
     return this.workOrderModel.create({
       tasksIds: workOrderTasks.map(({ taskId }) => taskId),
-      date: new Date(),
+      startDate: new Date(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+      name: name,
     });
   }
 
   async getCurrentWorkOrder() {
     const currentWorkOrder = await this.workOrderModel
       .findOne()
-      .sort({ date: -1 })
+      .sort({ startDate: -1 })
       .exec();
 
     const tasks = await this.taskModel
       .find({ _id: { $in: currentWorkOrder.tasksIds } })
+      .exec();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { tasksIds, ...workOrderData } = currentWorkOrder.toObject();
+
+    return {
+      ...workOrderData,
+      tasks,
+    };
+  }
+
+  async getCurrentWorkOrderForWorker(workerId: string) {
+    const currentWorkOrder = await this.workOrderModel
+      .findOne()
+      .sort({ startDate: -1 })
+      .exec();
+
+    const tasks = await this.taskModel
+      .find({
+        _id: { $in: currentWorkOrder.tasksIds },
+        'workerAssigned._id': workerId,
+      })
       .exec();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,7 +142,7 @@ export class WorkOrdersService {
           title: task.title,
           description: task.description,
           requiresTaskReport: task.requiresTaskReport,
-          estimatedHours: task.estimatedHours,
+          estimatedHoursToComplete: task.estimatedHoursToComplete,
         })),
         workers: workers.map((worker) => ({
           id: worker._id.toString(),

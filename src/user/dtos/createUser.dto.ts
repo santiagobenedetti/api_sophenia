@@ -5,7 +5,9 @@ import { User } from '../schemas/user.schema';
 import { RolesEnum } from 'src/auth/enums';
 import { UserStatusEnum } from 'src/auth/enums/userStatus.enum';
 
-export class CreateUserDto implements Omit<User, '_id' | 'password' | 'roles'> {
+export class CreateUserDto
+  implements Omit<User, '_id' | 'password' | 'roles' | 'availability'>
+{
   @ApiProperty()
   @Expose()
   @IsString()
