@@ -21,4 +21,9 @@ export class CreateWorkOrderDto {
   @Type(() => WorkOrderAssignedTaskDto)
   @IsArray()
   workOrderTasks: WorkOrderAssignedTaskDto[];
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  name: string;
 }

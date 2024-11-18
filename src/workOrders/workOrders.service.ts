@@ -42,7 +42,7 @@ export class WorkOrdersService {
     return { ...filteredWorkOrder, tasks };
   }
 
-  async createWorkOrder({ workOrderTasks }: CreateWorkOrderDto) {
+  async createWorkOrder({ workOrderTasks, name }: CreateWorkOrderDto) {
     const tasks = [];
     for (const { taskId, workerAssignedId } of workOrderTasks) {
       const foundTask = await this.taskModel.findById(taskId).exec();
@@ -63,7 +63,9 @@ export class WorkOrdersService {
     }
     return this.workOrderModel.create({
       tasksIds: workOrderTasks.map(({ taskId }) => taskId),
-      date: new Date(),
+      startDate: new Date(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+      name: name,
     });
   }
 

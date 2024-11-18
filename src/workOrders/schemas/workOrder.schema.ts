@@ -11,7 +11,13 @@ export class WorkOrder {
   tasksIds: string[];
 
   @Prop({ required: true })
-  date: Date;
+  startDate: Date;
+
+  @Prop({ required: true })
+  endDate: Date;
+
+  @Prop({ required: true })
+  name: string;
 }
 
 export const WorkOrderSchema = SchemaFactory.createForClass(WorkOrder);
