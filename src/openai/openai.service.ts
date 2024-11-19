@@ -22,7 +22,6 @@ export class OpenAIService {
     seasonMoment?: string,
     objective?: string,
   ) {
-    console.log('creatingTasks, seasonMoment:', seasonMoment);
     const Task = z.object({
       title: z.string(),
       description: z.string(),
