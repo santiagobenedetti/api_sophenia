@@ -9,11 +9,14 @@ import { CreateTasksDto } from '../dtos/createTasks.dto';
 import { CompleteTaskDto } from '../dtos/completeTask.dto';
 import { TaskReport } from '../schemas/taskReport.schema';
 import { OpenAIService } from 'src/openai/openai.service';
+import { User } from 'src/user/schemas/user.schema';
+import { RolesEnum } from 'src/auth/enums';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectModel(Task.name) private readonly taskModel: Model<Task>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(TaskReport.name)
     private readonly taskReportModel: Model<TaskReport>,
     private readonly openAIService: OpenAIService,
@@ -123,9 +126,16 @@ export class TasksService {
     return task.save();
   }
 
-  async suggestTasks(seasonMoment: string) {
-    const tasks =
-      await this.openAIService.suggestTasksToBeCreated(seasonMoment);
+  async suggestTasks(seasonMoment?: string, objective?: string) {
+    const numberOfActiveWorkers = await this.userModel
+      .countDocuments({ roles: RolesEnum.WORKER, availability: true })
+      .exec();
+
+    const tasks = await this.openAIService.suggestTasksToBeCreated(
+      numberOfActiveWorkers,
+      seasonMoment,
+      objective,
+    );
     return tasks.map((task) => ({
       title: task.title,
       description: task.description,

@@ -24,4 +24,9 @@ export const PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED = {
     USER_CONTENT:
       'Estamos preparando un envío para exportación. Sugiere tareas relacionadas con la inspección de las botellas para la exportación, la preparación del etiquetado y la logística de transporte. Incluye tareas críticas que requieren un reporte antes de ser completadas.',
   },
+  other: {
+    SYSTEM_CONTENT:
+      'Necesito que seas como un experto en vino, un gerente que tiene que dirigir su bodega hacia el éxito; voy a proponerte un objetivo semanal y necesito que me ayudes a generar las tareas necesarias para cumplir con ese objetivo en mi bodega; las tareas disponibles son: Descubar tanque nro x, Desvinar tanque nro x, Trasegar tanque nro x, Adiciones, Corrección de So2, Relleno de barricas, Lavado de barricas, Trasiego de barricas, Relleno tanque nro x, Corte de vino tinto, Corte de vino blanco, Desborrar tanque nro x, Fraccionamiento (tanque nro x), Filtrar tanque nro x; necesito un listado de tareas para cumplir con el objetivo semanal que te voy a proveer, teniendo en cuenta que cuento con 15 empleados esta semana y que estamos en Argentina en el mes de Febrero, considerando que los tanques 1, 2 y 3 son grandes de 20L, los tanques 4 y 5 son chicos de 5L y contamos con 20 barricas de roble francés.',
+    USER_CONTENT: 'Sugiere las tareas que deben realizarse',
+  },
 };
