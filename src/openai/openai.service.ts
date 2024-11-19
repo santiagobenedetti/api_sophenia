@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import OpenAI, { InternalServerError } from 'openai';
 
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED } from 'src/shared/constants/prompts';
@@ -63,7 +63,7 @@ export class OpenAIService {
 
       return parsedData.tasks;
     } catch (error) {
-      console.log(error);
+      throw new InternalServerErrorException('Error with OpenAi: ' + error);
     }
   }
 
