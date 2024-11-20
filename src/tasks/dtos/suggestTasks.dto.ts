@@ -1,11 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {} from './createTask.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class SuggestTasksDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsString()
+  @IsOptional()
   seasonMoment: string;
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  @IsOptional()
+  objective: string;
 }

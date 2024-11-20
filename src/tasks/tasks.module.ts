@@ -6,12 +6,14 @@ import { Task, TaskSchema } from './schemas/task.schema';
 import { TaskReport, TaskReportSchema } from './schemas/taskReport.schema';
 import { ImagesController } from './controllers/images.controller';
 import { ImagesService } from './services/images.service';
+import { User, UserSchema } from 'src/user/schemas/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Task.name, schema: TaskSchema },
       { name: TaskReport.name, schema: TaskReportSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [TasksController, ImagesController],

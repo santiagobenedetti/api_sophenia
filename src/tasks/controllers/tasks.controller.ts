@@ -62,9 +62,9 @@ export class TasksController {
         },
       }),
     )
-    { seasonMoment }: SuggestTasksDto,
+    { seasonMoment, objective }: SuggestTasksDto,
   ) {
-    return this.tasksService.suggestTasks(seasonMoment);
+    return this.tasksService.suggestTasks(seasonMoment, objective);
   }
 
   @UseGuards(JwtGuard)
