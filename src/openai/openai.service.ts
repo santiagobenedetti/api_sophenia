@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import OpenAI, { InternalServerError } from 'openai';
 
 import { zodResponseFormat } from 'openai/helpers/zod';
 import { PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED } from 'src/shared/constants/prompts';
@@ -17,7 +17,11 @@ export class OpenAIService {
     });
   }
 
-  async suggestTasksToBeCreated(seasonMoment: string) {
+  async suggestTasksToBeCreated(
+    numberOfActiveWorkers: number,
+    seasonMoment?: string,
+    objective?: string,
+  ) {
     const Task = z.object({
       title: z.string(),
       description: z.string(),
@@ -29,24 +33,38 @@ export class OpenAIService {
       tasks: z.array(Task),
     });
 
-    const { SYSTEM_CONTENT, USER_CONTENT } =
+    if (!seasonMoment) {
+      seasonMoment = 'other';
+    }
+
+    // eslint-disable-next-line prefer-const
+    let { SYSTEM_CONTENT, USER_CONTENT } =
       PROMPTS_TO_SUGGEST_TASKS_TO_BE_CREATED[seasonMoment];
 
-    const completion = await this.openai.beta.chat.completions.parse({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: SYSTEM_CONTENT,
-        },
-        { role: 'user', content: USER_CONTENT },
-      ],
-      response_format: zodResponseFormat(Tasks, 'tasks'),
-    });
+    if (objective) {
+      USER_CONTENT = `${USER_CONTENT}. Teniendo en cuenta que actualmente hay ${numberOfActiveWorkers} empleados disponibles y siguiendo el siguiente objetivo para la semana: "${objective}"`;
+    } else {
+      USER_CONTENT = `${USER_CONTENT}. Teniendo en cuenta que actualmente hay ${numberOfActiveWorkers} empleados disponibles.`;
+    }
 
-    const parsedData = completion.choices[0].message.parsed;
+    try {
+      const completion = await this.openai.beta.chat.completions.parse({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: SYSTEM_CONTENT,
+          },
+          { role: 'user', content: USER_CONTENT },
+        ],
+        response_format: zodResponseFormat(Tasks, 'tasks'),
+      });
+      const parsedData = completion.choices[0].message.parsed;
 
-    return parsedData.tasks;
+      return parsedData.tasks;
+    } catch (error) {
+      throw new InternalServerErrorException('Error with OpenAi: ' + error);
+    }
   }
 
   async suggestWorkOrderTasksAssignations({
