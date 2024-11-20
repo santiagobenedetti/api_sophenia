@@ -64,7 +64,7 @@ export class UserService {
   }
 
   async getUsers({ limit, offset, role }: GetUsersQueryParams) {
-    const query: any = {};
+    const query: any = { status: UserStatusEnum.ACTIVE };
     if (role) {
       query.roles = role;
     }
