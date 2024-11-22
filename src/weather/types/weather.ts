@@ -8,7 +8,7 @@ export type WeatherData = {
   tzoffset: number;
   description: string;
   days: Day[];
-  alerts: any[]; // Can be further specified if alert details are provided
+  alerts: any[];
   currentConditions: CurrentConditions;
 };
 
@@ -26,7 +26,7 @@ export type DayWithoutHours = {
   precip: number;
   precipprob: number;
   precipcover: number;
-  preciptype?: string[]; // Optional as it can be null
+  preciptype?: string[];
   snow: number;
   snowdepth: number;
   windgust: number;
@@ -66,7 +66,7 @@ export type Hour = {
   precipprob: number;
   snow: number;
   snowdepth: number;
-  preciptype?: string[]; // Optional as it can be null
+  preciptype?: string[];
   windgust: number;
   windspeed: number;
   winddir: number;
@@ -79,7 +79,7 @@ export type Hour = {
   severerisk: number;
   conditions: string;
   icon: string;
-  stations: string[] | null; // Can be null
+  stations: string[] | null;
   source: string;
 };
 
@@ -94,7 +94,7 @@ export type CurrentConditions = {
   precipprob: number;
   snow: number;
   snowdepth: number;
-  preciptype?: string[]; // Optional as it can be null
+  preciptype?: string[];
   windgust: number;
   windspeed: number;
   winddir: number;
@@ -107,7 +107,7 @@ export type CurrentConditions = {
   severerisk: number;
   conditions: string;
   icon: string;
-  stations: string[] | null; // Can be null
+  stations: string[] | null;
   source: string;
   sunrise: string;
   sunriseEpoch: number;
