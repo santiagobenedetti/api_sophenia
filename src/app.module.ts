@@ -11,6 +11,7 @@ import { NotificatorModule } from './notificator/notificator.module';
 import { TasksModule } from './tasks/tasks.module';
 import { WorkOrdersModule } from './workOrders/workOrders.module';
 import { ReportsModule } from './reports/reports.module';
+import { WeatherModule } from './weather/weather.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReportsModule } from './reports/reports.module';
     TasksModule,
     WorkOrdersModule,
     ReportsModule,
+    WeatherModule,
   ],
   controllers: [AppController],
   providers: [AppService],
