@@ -41,8 +41,6 @@ export class ImagesController {
     return { fileId };
   }
 
-  @UseGuards(JwtGuard)
-  @ApiBearerAuth('access-token')
   @Get(':id')
   async getFile(@Param('id') id: string, @Res() res: Response) {
     const fileStream = await this.fileService.findFileById(id);
