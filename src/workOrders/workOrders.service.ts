@@ -58,7 +58,7 @@ export class WorkOrdersService {
       if (!foundWorker) {
         throw new NotFoundException('User not found');
       }
-      foundTask.workerAssigned = foundWorker;
+      foundTask.workerAssigned = foundWorker.toObject();
       await foundTask.save();
     }
     return this.workOrderModel.create({
