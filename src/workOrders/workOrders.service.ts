@@ -13,6 +13,7 @@ import { GetWorkOrdersQueryParams } from 'src/shared/types/workOrders';
 import { mapPagination } from 'src/shared/mappers/pagination.mapper';
 import { OpenAIService } from 'src/openai/openai.service';
 import { SuggestWorkOrdersAssingationsDto } from './dtos/suggestWorkOrdersAssingations.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class WorkOrdersService {
@@ -97,7 +98,7 @@ export class WorkOrdersService {
     const tasks = await this.taskModel
       .find({
         _id: { $in: currentWorkOrder.tasksIds },
-        'workerAssigned._id': workerId,
+        'workerAssigned._id': new ObjectId(workerId),
       })
       .exec();
 
