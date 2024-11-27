@@ -25,6 +25,10 @@ export class Task {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   workerAssigned?: User;
 
+  // Time when the task was started (it changed its status to IN_PROGRESS)
+  @Prop({ type: Date })
+  startTime?: Date;
+
   @Prop()
   estimatedHoursToComplete?: number;
 

@@ -64,7 +64,7 @@ export class ReportsService {
     // Find all the workorders between the given dates and include the tasks
     const workOrders = await this.workOrderModel
       .find({
-        date: { $gte: dateFrom, $lte: dateTo },
+        startDate: { $gte: dateFrom, $lte: dateTo },
       })
       .exec();
 

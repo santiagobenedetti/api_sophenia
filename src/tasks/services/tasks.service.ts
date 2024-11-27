@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task } from '../schemas/task.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -11,6 +15,8 @@ import { TaskReport } from '../schemas/taskReport.schema';
 import { OpenAIService } from 'src/openai/openai.service';
 import { User } from 'src/user/schemas/user.schema';
 import { RolesEnum } from 'src/auth/enums';
+
+const HOUR_IN_MS = 1000 * 60 * 60;
 
 @Injectable()
 export class TasksService {
@@ -66,6 +72,9 @@ export class TasksService {
     }
 
     task.status = status;
+    if (status === TaskStatusEnum.IN_PROGRESS && !task.startTime) {
+      task.startTime = new Date();
+    }
     await task.save();
     return task;
   }
@@ -80,11 +89,20 @@ export class TasksService {
       task.status == TaskStatusEnum.DONE ||
       task.status == TaskStatusEnum.IN_REVIEW
     ) {
-      throw new Error('Cannot complete a task that is done or in review');
+      throw new BadRequestException(
+        'Cannot complete a task that is done or in review',
+      );
     }
 
     if (task.requiresTaskReport && !completeTaskDto.detail) {
-      throw new Error('Task report is required');
+      throw new BadRequestException('Task report is required');
+    }
+
+    if (task.startTime) {
+      const milliseconds = new Date().getTime() - task.startTime.getTime();
+      task.realHoursToComplete = parseFloat(
+        (milliseconds / HOUR_IN_MS).toFixed(1),
+      );
     }
 
     // Asumo que todas las tasks van a review, si no es así, podemos cambiar esto
