@@ -87,18 +87,22 @@ export class ReportsService {
       completedTasks: workOrder.tasks.filter(
         (task) => task.status === TaskStatusEnum.DONE,
       ).length,
-      totalEstimatedHours: workOrder.tasks.reduce(
-        (acc, task) =>
-          task.estimatedHoursToComplete
-            ? acc + task.estimatedHoursToComplete
-            : 0,
-        0,
-      ),
-      totalActualHours: workOrder.tasks.reduce(
-        (acc, task) =>
-          task.realHoursToComplete ? acc + task.realHoursToComplete : 0,
-        0,
-      ),
+      totalEstimatedHours: workOrder.tasks
+        .reduce(
+          (acc, task) =>
+            task.estimatedHoursToComplete
+              ? acc + task.estimatedHoursToComplete
+              : 0,
+          0,
+        )
+        .toFixed(1),
+      totalActualHours: workOrder.tasks
+        .reduce(
+          (acc, task) =>
+            task.realHoursToComplete ? acc + task.realHoursToComplete : 0,
+          0,
+        )
+        .toFixed(1),
     }));
 
     return new Promise((resolve, reject) => {
