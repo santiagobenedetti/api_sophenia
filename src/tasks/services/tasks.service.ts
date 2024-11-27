@@ -161,4 +161,23 @@ export class TasksService {
       estimatedHoursToComplete: task.estimatedHoursToComplete,
     }));
   }
+
+  async assignTasksToWorker(taskIds: string[], workerId: string) {
+    const worker = await this.userModel.findById(workerId).exec();
+    if (!worker) {
+      throw new NotFoundException('Worker not found');
+    }
+
+    const tasks = await this.taskModel.find({ _id: { $in: taskIds } }).exec();
+    if (tasks.length !== taskIds.length) {
+      throw new NotFoundException('Some tasks were not found');
+    }
+
+    tasks.forEach((task) => {
+      task.workerAssigned = worker.toObject();
+      task.save();
+    });
+
+    return tasks;
+  }
 }

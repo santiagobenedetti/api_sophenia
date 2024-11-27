@@ -28,7 +28,7 @@ export class ReportsService {
 
     const records = tasks.map((task) => ({
       title: task.title,
-      description: task.description,
+      // description: task.description,
       rating: task.rating,
       estimatedHoursToComplete: task.estimatedHoursToComplete || 0,
       actualHours: task.realHoursToComplete || 0,
@@ -40,14 +40,14 @@ export class ReportsService {
         {
           header: true,
           columns: [
-            { key: 'title', header: 'Title' },
-            { key: 'description', header: 'Description' },
-            { key: 'rating', header: 'Rating' },
+            { key: 'title', header: 'Tarea' },
+            // { key: 'description', header: 'Description' },
+            { key: 'rating', header: 'Puntaje obtenido' },
             {
               key: 'estimatedHoursToComplete',
-              header: 'Estimated Hours To Complete',
+              header: 'Horas estimadas',
             },
-            { key: 'actualHours', header: 'Actual Hours' },
+            { key: 'actualHours', header: 'Horas consumidas' },
           ],
         },
         (err, output) => {
@@ -87,18 +87,22 @@ export class ReportsService {
       completedTasks: workOrder.tasks.filter(
         (task) => task.status === TaskStatusEnum.DONE,
       ).length,
-      totalEstimatedHours: workOrder.tasks.reduce(
-        (acc, task) =>
-          acc + task.estimatedHoursToComplete
-            ? task.estimatedHoursToComplete
-            : 0,
-        0,
-      ),
-      totalActualHours: workOrder.tasks.reduce(
-        (acc, task) =>
-          acc + task.realHoursToComplete ? task.realHoursToComplete : 0,
-        0,
-      ),
+      totalEstimatedHours: workOrder.tasks
+        .reduce(
+          (acc, task) =>
+            task.estimatedHoursToComplete
+              ? acc + task.estimatedHoursToComplete
+              : 0,
+          0,
+        )
+        .toFixed(1),
+      totalActualHours: workOrder.tasks
+        .reduce(
+          (acc, task) =>
+            task.realHoursToComplete ? acc + task.realHoursToComplete : 0,
+          0,
+        )
+        .toFixed(1),
     }));
 
     return new Promise((resolve, reject) => {
@@ -107,11 +111,11 @@ export class ReportsService {
         {
           header: true,
           columns: [
-            { key: 'date', header: 'Date' },
-            { key: 'totalTasks', header: 'Total Tasks' },
-            { key: 'completedTasks', header: 'Completed Tasks' },
-            { key: 'totalEstimatedHours', header: 'Total Estimated Hours' },
-            { key: 'totalActualHours', header: 'Total Actual Hours' },
+            { key: 'date', header: 'Fecha' },
+            { key: 'totalTasks', header: 'Cantidad de tareas' },
+            { key: 'completedTasks', header: 'Tareas completadas' },
+            { key: 'totalEstimatedHours', header: 'Total de horas estimadas' },
+            { key: 'totalActualHours', header: 'Total de horas consumidas' },
           ],
         },
         (err, output) => {

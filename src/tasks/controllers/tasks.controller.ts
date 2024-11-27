@@ -25,6 +25,7 @@ import { UpdateTaskStatusDto } from '../dtos/updateTaskStatus.dto';
 import { CompleteTaskDto } from '../dtos/completeTask.dto';
 import { RateTaskDto } from '../dtos/taskRate.dto';
 import { SuggestTasksDto } from '../dtos/suggestTasks.dto';
+import { AssignTasksToWorkerDto } from '../dtos/assignTasksToWorker.dto';
 
 @ApiTags(TasksRoutesEnum.tasks)
 @Controller(TasksRoutesEnum.tasks)
@@ -157,5 +158,20 @@ export class TasksController {
       rateTaskDto.rating,
       rateTaskDto.ratingComment,
     );
+  }
+
+  @Post(TasksRoutesEnum.assignTasksToWorker)
+  async assignTasksToWorker(
+    @Body(
+      new ValidationPipe({
+        expectedType: AssignTasksToWorkerDto,
+        transformOptions: {
+          excludeExtraneousValues: true,
+        },
+      }),
+    )
+    { taskIds, workerId }: AssignTasksToWorkerDto,
+  ) {
+    return this.tasksService.assignTasksToWorker(taskIds, workerId);
   }
 }
